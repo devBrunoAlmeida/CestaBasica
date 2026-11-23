@@ -3,82 +3,140 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components
 
-<div class="notifications-page">
-    <div class="page-header">
-        <div>
-            <h1>Envio de Notificações</h1>
-            <p>Conecte seu WhatsApp via Evolution API e comunique os funcionários sobre a retirada das cestas.</p>
-        </div>
-    </div>
+<div class="space-y-6">
 
-    <!-- CARD DE CONEXÃO DO TELEFONE (EVOLUTION API) -->
-    <section class="whatsapp-connection-card">
-        <div class="whatsapp-header">
-            <div class="whatsapp-status-info">
-                <div class="whatsapp-icon @(StatusWhatsapp.Conectado ? "connected" : StatusWhatsapp.Configurado ? "disconnected" : "unconfigured")">
-                    📱
+    <!-- Cabeçalho da Página -->
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Envio de Notificações</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Conecte seu WhatsApp via Evolution API e comunique os funcionários sobre a retirada das cestas.</p>
+        </div>
+    </header>
+
+    <!-- Banner Horizontal Compacto: Conexão Evolution API -->
+    <section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sm:p-6 space-y-5">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div class="flex items-start sm:items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 @(StatusWhatsapp.Conectado ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : StatusWhatsapp.Configurado ? "bg-red-50 text-red-600 border border-red-200" : "bg-amber-50 text-amber-600 border border-amber-200")">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
                 </div>
-                <div>
-                    <div class="status-title-row">
-                        <h2>Telefone Remetente (WhatsApp)</h2>
+
+                <div class="space-y-1">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <h2 class="text-base font-bold text-slate-900">Telefone Remetente (WhatsApp)</h2>
+
                         @if (StatusWhatsapp.Conectado)
                         {
-                            <span class="conn-pill connected">● Conectado</span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Conectado
+                            </span>
                         }
                         else if (StatusWhatsapp.Configurado)
                         {
-                            <span class="conn-pill disconnected">● Desconectado</span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">
+                                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                Desconectado
+                            </span>
                         }
                         else
                         {
-                            <span class="conn-pill unconfigured">⚙️ Não configurado</span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                Não configurado
+                            </span>
                         }
                     </div>
 
                     @if (StatusWhatsapp.Conectado)
                     {
-                        <p class="conn-details">
-                            Instância: <strong>@StatusWhatsapp.InstanceName</strong>
+                        <p class="text-xs text-slate-500">
+                            Instância: <strong class="font-semibold text-slate-800">@StatusWhatsapp.InstanceName</strong>
                             @if (!string.IsNullOrWhiteSpace(StatusWhatsapp.PerfilNome))
                             {
-                                <span> • Perfil: <strong>@StatusWhatsapp.PerfilNome</strong></span>
+                                <span> • Perfil: <strong class="font-semibold text-slate-800">@StatusWhatsapp.PerfilNome</strong></span>
                             }
                             @if (!string.IsNullOrWhiteSpace(StatusWhatsapp.NumeroConectado))
                             {
-                                <span> • Número: <strong>@StatusWhatsapp.NumeroConectado</strong></span>
+                                <span> • Número: <strong class="font-semibold text-slate-800 tabular-nums">@StatusWhatsapp.NumeroConectado</strong></span>
                             }
                         </p>
                     }
                     else
                     {
-                        <p class="conn-details">@StatusWhatsapp.Mensagem</p>
+                        <p class="text-xs text-slate-500">@StatusWhatsapp.Mensagem</p>
                     }
                 </div>
             </div>
 
-            <div class="whatsapp-actions">
+            <!-- Botões de Ação do Banner -->
+            <div class="flex flex-wrap items-center gap-2.5">
                 @if (StatusWhatsapp.Conectado)
                 {
-                    <button type="button" class="btn-secondary" @onclick="AlternarPainelTeste" disabled="@CarregandoWhatsapp">
-                        📨 Testar envio
+                    <button type="button"
+                            class="h-10 px-3.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs sm:text-sm rounded-xl transition-all cursor-pointer inline-flex items-center gap-2"
+                            @onclick="AlternarPainelTeste"
+                            disabled="@CarregandoWhatsapp">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                        <span>Testar envio</span>
                     </button>
-                    <button type="button" class="btn-secondary" @onclick="AlternarPainelConfig" disabled="@CarregandoWhatsapp">
-                        ⚙️ Servidor
+
+                    <button type="button"
+                            class="h-10 px-3.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs sm:text-sm rounded-xl transition-all cursor-pointer inline-flex items-center gap-2"
+                            @onclick="AlternarPainelConfig"
+                            disabled="@CarregandoWhatsapp">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span>Servidor</span>
                     </button>
-                    <button type="button" class="btn-danger-outline" @onclick="DesconectarTelefoneAsync" disabled="@CarregandoWhatsapp">
-                        🔌 Desconectar telefone
+
+                    <button type="button"
+                            class="h-10 px-3.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-semibold text-xs sm:text-sm rounded-xl transition-all cursor-pointer inline-flex items-center gap-2"
+                            @onclick="DesconectarTelefoneAsync"
+                            disabled="@CarregandoWhatsapp">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3" />
+                        </svg>
+                        <span>Desconectar</span>
                     </button>
                 }
                 else
                 {
-                    <button type="button" class="btn-connect" @onclick="AbrirEConectarTelefoneAsync" disabled="@CarregandoWhatsapp">
-                        📱 Conectar meu WhatsApp
+                    <button type="button"
+                            class="h-10 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-all cursor-pointer inline-flex items-center gap-2"
+                            @onclick="AbrirEConectarTelefoneAsync"
+                            disabled="@CarregandoWhatsapp">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                        </svg>
+                        <span>Conectar meu WhatsApp</span>
                     </button>
-                    <button type="button" class="btn-secondary" @onclick="AlternarPainelConfig" disabled="@CarregandoWhatsapp">
-                        ⚙️ Configurar Evolution API
+
+                    <button type="button"
+                            class="h-10 px-3.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs sm:text-sm rounded-xl transition-all cursor-pointer inline-flex items-center gap-2"
+                            @onclick="AlternarPainelConfig"
+                            disabled="@CarregandoWhatsapp">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span>Configurar Evolution API</span>
                     </button>
-                    <button type="button" class="btn-icon" title="Atualizar status" @onclick="CarregarStatusWhatsappAsync" disabled="@CarregandoWhatsapp">
-                        🔄
+
+                    <button type="button"
+                            class="h-10 w-10 bg-white hover:bg-slate-50 text-slate-600 border border-slate-300 rounded-xl flex items-center justify-center transition-all cursor-pointer"
+                            title="Atualizar status"
+                            @onclick="CarregarStatusWhatsappAsync"
+                            disabled="@CarregandoWhatsapp">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
                     </button>
                 }
             </div>
@@ -86,304 +144,460 @@
 
         @if (!string.IsNullOrWhiteSpace(FeedbackWhatsapp))
         {
-            <div class="whatsapp-feedback @(FeedbackWhatsappErro ? "error" : "ok")">
-                @FeedbackWhatsapp
+            <div class="flex items-center gap-2.5 p-3.5 rounded-xl text-xs sm:text-sm font-medium @(FeedbackWhatsappErro ? "bg-red-50 border border-red-200 text-red-700" : "bg-emerald-50 border border-emerald-200 text-emerald-700")">
+                @if (FeedbackWhatsappErro)
+                {
+                    <svg class="w-4 h-4 shrink-0 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                }
+                else
+                {
+                    <svg class="w-4 h-4 shrink-0 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                }
+                <span>@FeedbackWhatsapp</span>
             </div>
         }
 
+        <!-- Subpainel: Configuração do Servidor Evolution API -->
         @if (ExibirPainelConfig)
         {
-            <div class="whatsapp-subpanel">
-                <div class="subpanel-header">
-                    <h3>⚙️ Configuração do Servidor Evolution API</h3>
-                    <span>Informe os dados da sua instância Evolution API. Eles ficam salvos no banco de dados.</span>
+            <div class="pt-4 border-t border-slate-100 space-y-4">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900">Configuração do Servidor Evolution API</h3>
+                    <span class="text-xs text-slate-500">Informe os dados da sua instância Evolution API. Eles ficam salvos no banco de dados.</span>
                 </div>
 
-                <div class="config-grid">
-                    <div class="form-group">
-                        <label>URL da Evolution API</label>
-                        <input class="input-clean" @bind="FormConfig.BaseUrl" placeholder="Ex: http://localhost:8080" />
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">URL da Evolution API</label>
+                        <input type="text"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               @bind="FormConfig.BaseUrl"
+                               placeholder="Ex: http://localhost:8080" />
                     </div>
 
-                    <div class="form-group">
-                        <label>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
                             API Key (Global ou da Instância)
                             @if (!string.IsNullOrWhiteSpace(StatusWhatsapp.ApiKeyMascarada))
                             {
-                                <small class="saved-key-hint">Atual: @StatusWhatsapp.ApiKeyMascarada</small>
+                                <small class="ml-1 text-[11px] font-normal text-blue-600">(Atual: @StatusWhatsapp.ApiKeyMascarada)</small>
                             }
                         </label>
-                        <input type="password" class="input-clean" @bind="FormConfig.ApiKey"
+                        <input type="password"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               @bind="FormConfig.ApiKey"
                                placeholder="@(string.IsNullOrWhiteSpace(StatusWhatsapp.ApiKeyMascarada) ? "Cole sua API Key da Evolution" : "Deixe em branco para manter a chave atual")" />
                     </div>
 
-                    <div class="form-group">
-                        <label>Nome da Instância</label>
-                        <input class="input-clean" @bind="FormConfig.InstanceName" placeholder="Ex: cesta-basica" />
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Nome da Instância</label>
+                        <input type="text"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               @bind="FormConfig.InstanceName"
+                               placeholder="Ex: cesta-basica" />
                     </div>
 
-                    <div class="form-group">
-                        <label>Seu Telefone WhatsApp (Opcional)</label>
-                        <input class="input-clean" @bind="FormConfig.Telefone" placeholder="(15) 99999-9999" />
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Seu Telefone WhatsApp (Opcional)</label>
+                        <input type="text"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               @bind="FormConfig.Telefone"
+                               placeholder="(15) 99999-9999" />
                     </div>
                 </div>
 
-                <div class="subpanel-actions">
-                    <button type="button" class="btn-secondary" @onclick="() => ExibirPainelConfig = false">
+                <div class="flex flex-wrap items-center justify-end gap-2.5">
+                    <button type="button"
+                            class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer"
+                            @onclick="() => ExibirPainelConfig = false">
                         Cancelar
                     </button>
-                    <button type="button" class="btn-secondary" @onclick="() => SalvarConfiguracaoWhatsappAsync(false)" disabled="@CarregandoWhatsapp">
-                        💾 Salvar
+
+                    <button type="button"
+                            class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer inline-flex items-center gap-2"
+                            @onclick="() => SalvarConfiguracaoWhatsappAsync(false)"
+                            disabled="@CarregandoWhatsapp">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Salvar</span>
                     </button>
-                    <button type="button" class="btn-connect" @onclick="() => SalvarConfiguracaoWhatsappAsync(true)" disabled="@CarregandoWhatsapp">
-                        💾 Salvar e Conectar Telefone
+
+                    <button type="button"
+                            class="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm rounded-xl shadow-xs transition-all cursor-pointer inline-flex items-center gap-2"
+                            @onclick="() => SalvarConfiguracaoWhatsappAsync(true)"
+                            disabled="@CarregandoWhatsapp">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span>Salvar e Conectar Telefone</span>
                     </button>
                 </div>
             </div>
         }
 
+        <!-- Subpainel: Enviar Mensagem de Teste -->
         @if (ExibirPainelTeste && StatusWhatsapp.Conectado)
         {
-            <div class="whatsapp-subpanel">
-                <div class="subpanel-header">
-                    <h3>📨 Enviar Mensagem de Teste</h3>
-                    <span>Valide o envio no seu próprio número antes de disparar para os funcionários.</span>
+            <div class="pt-4 border-t border-slate-100 space-y-3">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900">Enviar Mensagem de Teste</h3>
+                    <span class="text-xs text-slate-500">Valide o envio no seu próprio número antes de disparar para os funcionários.</span>
                 </div>
 
-                <div class="test-row">
-                    <input class="input-clean" @bind="TelefoneTeste" placeholder="Digite o telefone com DDD: (15) 99999-9999" />
-                    <button type="button" class="btn-connect" @onclick="EnviarMensagemTesteAsync" disabled="@CarregandoWhatsapp">
+                <div class="flex flex-col sm:flex-row gap-2.5">
+                    <input type="text"
+                           class="flex-1 h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                           @bind="TelefoneTeste"
+                           placeholder="Digite o telefone com DDD: (15) 99999-9999" />
+
+                    <button type="button"
+                            class="h-10 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-sm rounded-xl shadow-xs transition-all cursor-pointer"
+                            @onclick="EnviarMensagemTesteAsync"
+                            disabled="@CarregandoWhatsapp">
                         @(CarregandoWhatsapp ? "Enviando..." : "Enviar agora")
                     </button>
-                    <button type="button" class="btn-secondary" @onclick="() => ExibirPainelTeste = false">
+
+                    <button type="button"
+                            class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer"
+                            @onclick="() => ExibirPainelTeste = false">
                         Fechar
                     </button>
                 </div>
             </div>
         }
 
+        <!-- Subpainel: Pareamento QR Code / Código -->
         @if (ExibirPainelPareamento && !StatusWhatsapp.Conectado)
         {
-            <div class="whatsapp-subpanel pairing-grid">
-                <div class="pairing-steps">
-                    <h3>Como conectar seu celular</h3>
-                    <ol>
+            <div class="pt-4 border-t border-slate-100 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="lg:col-span-7 space-y-4">
+                    <h3 class="text-sm font-bold text-slate-900">Como conectar seu celular</h3>
+                    <ol class="list-decimal list-inside text-xs sm:text-sm text-slate-600 space-y-1.5">
                         <li>Abra o <strong>WhatsApp</strong> no telefone que deseja usar para os disparos.</li>
-                        <li>Toque em <strong>Mais opções (⋮)</strong> ou <strong>Configurações</strong> e escolha <strong>Aparelhos conectados</strong>.</li>
+                        <li>Toque em <strong>Mais opções</strong> ou <strong>Configurações</strong> e escolha <strong>Aparelhos conectados</strong>.</li>
                         <li>Toque em <strong>Conectar um aparelho</strong> e aponte a câmera para o QR Code ao lado.</li>
                     </ol>
 
-                    <div class="pairing-mode-toggle">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" @bind="UsarCodigoPareamento" />
-                            Prefiro conectar digitando o número do telefone (Código de Pareamento)
+                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
+                        <label class="flex items-center gap-2.5 text-xs sm:text-sm font-medium text-slate-700 cursor-pointer">
+                            <input type="checkbox"
+                                   class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                   @bind="UsarCodigoPareamento" />
+                            <span>Prefiro conectar digitando o número do telefone (Código de Pareamento)</span>
                         </label>
 
                         @if (UsarCodigoPareamento)
                         {
-                            <div class="pairing-phone-box">
-                                <input class="input-clean" @bind="TelefonePareamento" placeholder="Ex: (15) 99999-9999" />
-                                <button type="button" class="btn-connect" @onclick="GerarConexaoTelefoneAsync" disabled="@CarregandoWhatsapp">
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <input type="text"
+                                       class="flex-1 h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                                       @bind="TelefonePareamento"
+                                       placeholder="Ex: (15) 99999-9999" />
+
+                                <button type="button"
+                                        class="h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl shadow-xs transition-all cursor-pointer"
+                                        @onclick="GerarConexaoTelefoneAsync"
+                                        disabled="@CarregandoWhatsapp">
                                     Gerar código
                                 </button>
                             </div>
                         }
                     </div>
 
-                    <div class="subpanel-actions left">
-                        <button type="button" class="btn-secondary" @onclick="GerarConexaoTelefoneAsync" disabled="@CarregandoWhatsapp">
-                            🔄 Atualizar QR Code
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <button type="button"
+                                class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer inline-flex items-center gap-2"
+                                @onclick="GerarConexaoTelefoneAsync"
+                                disabled="@CarregandoWhatsapp">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span>Atualizar QR Code</span>
                         </button>
-                        <button type="button" class="btn-secondary" @onclick="FecharPainelPareamento">
+
+                        <button type="button"
+                                class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer"
+                                @onclick="FecharPainelPareamento">
                             Fechar
                         </button>
                     </div>
                 </div>
 
-                <div class="qr-box">
+                <div class="lg:col-span-5 flex flex-col items-center justify-center p-6 rounded-2xl bg-slate-50 border border-slate-200/80 min-h-[240px] text-center">
                     @if (CarregandoWhatsapp)
                     {
-                        <div class="qr-placeholder">
-                            <span>⏳ Gerando conexão com a Evolution API...</span>
+                        <div class="space-y-2 text-slate-500">
+                            <svg class="animate-spin h-7 w-7 mx-auto text-blue-600" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                            </svg>
+                            <span class="block text-xs font-medium">Gerando conexão com a Evolution API...</span>
                         </div>
                     }
                     else if (!string.IsNullOrWhiteSpace(PairingCode))
                     {
-                        <div class="pairing-code-display">
-                            <span>Código de Pareamento</span>
-                            <strong>@PairingCode</strong>
-                            <small>Digite este código no aviso exibido em seu WhatsApp</small>
+                        <div class="space-y-2">
+                            <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Código de Pareamento</span>
+                            <strong class="block text-2xl font-mono font-extrabold tracking-widest text-blue-700 bg-white px-4 py-2 rounded-xl border border-blue-200">@PairingCode</strong>
+                            <small class="block text-xs text-slate-500">Digite este código no aviso exibido em seu WhatsApp</small>
                         </div>
                     }
                     else if (!string.IsNullOrWhiteSpace(QrCodeBase64))
                     {
-                        <img src="@QrCodeBase64" alt="QR Code WhatsApp" class="qr-image" />
-                        <small class="qr-waiting">Aguardando leitura no celular... A tela atualizará sozinha.</small>
+                        <img src="@QrCodeBase64" alt="QR Code WhatsApp" class="w-48 h-48 rounded-xl border border-slate-200 bg-white p-2 shadow-xs" />
+                        <small class="block text-xs text-slate-500 mt-2.5">Aguardando leitura no celular... A tela atualizará sozinha.</small>
                     }
                     else
                     {
-                        <div class="qr-placeholder">
-                            <span>Clique em "Atualizar QR Code" para gerar um novo código.</span>
-                        </div>
+                        <span class="text-xs text-slate-400">Clique em "Atualizar QR Code" para gerar um novo código.</span>
                     }
                 </div>
             </div>
         }
     </section>
 
-    <section class="content-grid">
-        <div class="panel">
-            <div class="panel-header">
-                <div>
-                    <h2>Destinatários</h2>
-                    <span>Selecionados: <strong>@QuantidadeSelecionados</strong> funcionário(s)</span>
+    <!-- Grid 2 Colunas: Destinatários (Esquerda) & Mensagem + Balão WhatsApp (Direita) -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Coluna Esquerda: Destinatários -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sm:p-6 flex flex-col justify-between space-y-4">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Destinatários</h2>
+                        <span class="text-xs text-slate-500">Selecionados: <strong class="font-bold text-blue-600 tabular-nums">@QuantidadeSelecionados</strong> funcionário(s)</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="search-recipient-box">
-                <input class="input-clean"
-                       placeholder="🔎 Pesquisar por nome, setor ou telefone..."
-                       @bind="TermoBuscaFuncionario"
-                       @bind:event="oninput"
-                       @bind:after="AoBuscarFuncionario" />
-            </div>
+                <!-- Busca -->
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input type="text"
+                           class="w-full h-10 pl-10 pr-4 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                           placeholder="Pesquisar por nome, setor ou telefone..."
+                           @bind="TermoBuscaFuncionario"
+                           @bind:event="oninput"
+                           @bind:after="AoBuscarFuncionario" />
+                </div>
 
-            <div class="selection-actions">
-                <button type="button" @onclick="SelecionarTodosFiltrados">Selecionar listados (@FuncionariosFiltrados.Count())</button>
-                <button type="button" @onclick="LimparSelecao">Limpar seleção</button>
-            </div>
+                <!-- Ações de Seleção -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button"
+                            class="h-8 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition-colors cursor-pointer"
+                            @onclick="SelecionarTodosFiltrados">
+                        Selecionar listados (@FuncionariosFiltrados.Count())
+                    </button>
 
-            <div class="employee-list">
-                @foreach (var funcionario in FuncionariosPaginados)
-                {
-                    <label class="employee-item">
-                        <input type="checkbox" @bind="funcionario.Selecionado" />
+                    <button type="button"
+                            class="h-8 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-colors cursor-pointer"
+                            @onclick="LimparSelecao">
+                        Limpar seleção
+                    </button>
+                </div>
 
-                        <div>
-                            <strong>@funcionario.NomeCompleto</strong>
-                            <span>@funcionario.Setor • @funcionario.Telefone</span>
-                        </div>
-                    </label>
-                }
+                <!-- Lista de Funcionários -->
+                <div class="border border-slate-200 rounded-xl divide-y divide-slate-100 max-h-96 overflow-y-auto">
+                    @foreach (var funcionario in FuncionariosPaginados)
+                    {
+                        <label class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors cursor-pointer">
+                            <input type="checkbox"
+                                   class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 shrink-0"
+                                   @bind="funcionario.Selecionado" />
+
+                            <div class="min-w-0 flex-1">
+                                <strong class="block text-sm font-semibold text-slate-900 truncate">@funcionario.NomeCompleto</strong>
+                                <span class="block text-xs text-slate-500 truncate">@funcionario.Setor • @funcionario.Telefone</span>
+                            </div>
+                        </label>
+                    }
+                </div>
             </div>
 
             @if (TotalPaginas > 1)
             {
-                <div class="pagination">
-                    <button type="button" @onclick="PaginaAnterior" disabled="@(PaginaAtual == 1)">
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                    <button type="button"
+                            class="h-9 px-3 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
+                            @onclick="PaginaAnterior"
+                            disabled="@(PaginaAtual == 1)">
                         Anterior
                     </button>
 
-                    <span>Página @PaginaAtual de @TotalPaginas</span>
+                    <span class="text-xs text-slate-500">Página <strong class="text-slate-800">@PaginaAtual</strong> de <strong class="text-slate-800">@TotalPaginas</strong></span>
 
-                    <button type="button" @onclick="ProximaPagina" disabled="@(PaginaAtual >= TotalPaginas)">
+                    <button type="button"
+                            class="h-9 px-3 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
+                            @onclick="ProximaPagina"
+                            disabled="@(PaginaAtual >= TotalPaginas)">
                         Próxima
                     </button>
                 </div>
             }
         </div>
 
-        <div class="panel">
-            <div class="panel-header">
+        <!-- Coluna Direita: Editor + Balão de Pré-visualização WhatsApp -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sm:p-6 flex flex-col justify-between space-y-5">
+            <div class="space-y-5">
                 <div>
-                    <h2>Mensagem</h2>
-                    <span>Personalize antes do envio.</span>
+                    <h2 class="text-base font-bold text-slate-900">Mensagem</h2>
+                    <span class="text-xs text-slate-500">Personalize o comunicado antes do envio.</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Canal de envio</label>
+                    <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        <span>WhatsApp (Evolution API)</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-slate-500">Mensagem personalizada</label>
+                        <small class="text-xs text-slate-400 tabular-nums">@Mensagem.Length/300 caracteres</small>
+                    </div>
+
+                    <textarea rows="4"
+                              @bind="Mensagem"
+                              @bind:event="oninput"
+                              maxlength="300"
+                              placeholder="Digite a mensagem..."
+                              class="w-full p-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"></textarea>
+                </div>
+
+                <!-- Pré-visualização estilo Balão WhatsApp -->
+                <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            <span>Pré-visualização no WhatsApp</span>
+                        </span>
+                        <span class="text-[11px] text-emerald-700 font-medium">@DateTime.Now.ToString("HH:mm")</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl rounded-tl-none bg-white border border-emerald-200/60 shadow-2xs text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+                        @Mensagem
+                    </div>
+
+                    <strong class="block text-xs font-semibold text-emerald-800">
+                        Status do telefone:
+                        @(StatusWhatsapp.Conectado
+                            ? $"Conectado ({StatusWhatsapp.NumeroConectado ?? StatusWhatsapp.InstanceName})"
+                            : "Desconectado — conecte seu WhatsApp acima")
+                    </strong>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Canal de envio</label>
+            <div class="space-y-3 pt-2">
+                <button type="button"
+                        class="w-full h-11 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 text-white font-semibold text-sm rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-2"
+                        @onclick="EnviarNotificacao"
+                        disabled="@EnviandoNotificacoes">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                    <span>@(EnviandoNotificacoes ? "Enviando notificações..." : $"Enviar notificação ({QuantidadeSelecionados})")</span>
+                </button>
 
-                <div class="channel-options">
-                    <button type="button" class="active">WhatsApp (Evolution API)</button>
-                </div>
+                @if (!string.IsNullOrWhiteSpace(MensagemRetorno))
+                {
+                    <div class="p-3 rounded-xl text-xs font-semibold @(RetornoErro ? "bg-red-50 text-red-700 border border-red-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200")">
+                        @MensagemRetorno
+                    </div>
+                }
             </div>
-
-            <div class="form-group">
-                <label>Mensagem personalizada</label>
-
-                <textarea @bind="Mensagem" @bind:event="oninput" maxlength="300" placeholder="Digite a mensagem..."></textarea>
-
-                <small>@Mensagem.Length/300 caracteres</small>
-            </div>
-
-            <div class="preview-box">
-                <span>Pré-visualização</span>
-                <p>@Mensagem</p>
-                <strong>
-                    Status do telefone:
-                    @(StatusWhatsapp.Conectado
-                        ? $"Conectado ({StatusWhatsapp.NumeroConectado ?? StatusWhatsapp.InstanceName})"
-                        : "Desconectado — conecte seu WhatsApp acima")
-                </strong>
-            </div>
-
-            <button class="btn-primary" @onclick="EnviarNotificacao" disabled="@EnviandoNotificacoes">
-                @(EnviandoNotificacoes ? "Enviando notificações..." : $"Enviar notificação ({QuantidadeSelecionados})")
-            </button>
-
-            @if (!string.IsNullOrWhiteSpace(MensagemRetorno))
-            {
-                <p class="retorno @(RetornoErro ? "erro" : "")">@MensagemRetorno</p>
-            }
         </div>
+
     </section>
 
-    <section class="history-panel">
-        <div class="panel-header">
-            <div>
-                <h2>Histórico de notificações enviadas</h2>
-                <span>Últimas comunicações realizadas nos últimos 30 dias.</span>
-            </div>
+    <!-- Histórico de Notificações Enviadas -->
+    <section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sm:p-6 space-y-4">
+        <div>
+            <h2 class="text-base font-bold text-slate-900">Histórico de notificações enviadas</h2>
+            <span class="text-xs text-slate-500">Últimas comunicações realizadas nos últimos 30 dias.</span>
         </div>
 
-        <div class="table-responsive">
-            <table>
-                <thead>
+        <div class="overflow-x-auto rounded-xl border border-slate-200">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap">
                     <tr>
-                        <th>Funcionário</th>
-                        <th>Canal</th>
-                        <th>Status</th>
-                        <th>Mensagem</th>
-                        <th>Data</th>
+                        <th class="py-3 px-4">Funcionário</th>
+                        <th class="py-3 px-4">Canal</th>
+                        <th class="py-3 px-4">Status</th>
+                        <th class="py-3 px-4">Mensagem</th>
+                        <th class="py-3 px-4">Data</th>
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody class="divide-y divide-slate-100 bg-white text-sm text-slate-700">
                     @foreach (var item in HistoricoPaginado)
                     {
-                        <tr>
-                            <td>@(string.IsNullOrWhiteSpace(item.FuncionarioNome) ? $"ID #{item.FuncionarioId}" : item.FuncionarioNome)</td>
-                            <td>@item.Canal</td>
-                            <td>
-                                <span class="badge @(item.Status == "Enviado" ? "entregue" : "falhou")">
-                                    @(string.IsNullOrWhiteSpace(item.Status) ? "Enviado" : item.Status)
-                                </span>
+                        var enviadoOk = string.IsNullOrWhiteSpace(item.Status) || item.Status == "Enviado";
+                        <tr class="hover:bg-slate-50/80 transition-colors">
+                            <td class="py-3 px-4 font-semibold text-slate-900 whitespace-nowrap">
+                                @(string.IsNullOrWhiteSpace(item.FuncionarioNome) ? $"ID #{item.FuncionarioId}" : item.FuncionarioNome)
                             </td>
-                            <td>@item.Mensagem</td>
-                            <td>
+                            <td class="py-3 px-4 whitespace-nowrap">@item.Canal</td>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                @if (enviadoOk)
+                                {
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        @(string.IsNullOrWhiteSpace(item.Status) ? "Enviado" : item.Status)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                        @item.Status
+                                    </span>
+                                }
+                            </td>
+                            <td class="py-3 px-4 text-slate-600 max-w-md truncate">@item.Mensagem</td>
+                            <td class="py-3 px-4 tabular-nums text-slate-500 whitespace-nowrap">
                                 @(item.DataEnvio?.ToString("dd/MM/yyyy HH:mm") ?? "-")
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-
-            @if (TotalPaginasHistorico > 1)
-            {
-                <div class="pagination">
-                    <button type="button" @onclick="PaginaAnteriorHistorico" disabled="@(PaginaAtualHistorico == 1)">
-                        Anterior
-                    </button>
-
-                    <span>Página @PaginaAtualHistorico de @TotalPaginasHistorico</span>
-
-                    <button type="button" @onclick="ProximaPaginaHistorico"
-                            disabled="@(PaginaAtualHistorico >= TotalPaginasHistorico)">
-                        Próxima
-                    </button>
-                </div>
-            }
         </div>
+
+        @if (TotalPaginasHistorico > 1)
+        {
+            <div class="flex items-center justify-between pt-2">
+                <button type="button"
+                        class="h-9 px-3 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
+                        @onclick="PaginaAnteriorHistorico"
+                        disabled="@(PaginaAtualHistorico == 1)">
+                    Anterior
+                </button>
+
+                <span class="text-xs text-slate-500">Página <strong class="text-slate-800">@PaginaAtualHistorico</strong> de <strong class="text-slate-800">@TotalPaginasHistorico</strong></span>
+
+                <button type="button"
+                        class="h-9 px-3 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 text-xs font-medium text-slate-700 transition-colors cursor-pointer"
+                        @onclick="ProximaPaginaHistorico"
+                        disabled="@(PaginaAtualHistorico >= TotalPaginasHistorico)">
+                    Próxima
+                </button>
+            </div>
+        }
     </section>
+
 </div>

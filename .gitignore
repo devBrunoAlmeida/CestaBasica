@@ -1,11 +1,88 @@
-bin/
-obj/
-appsettings.Development.json
+# =============================================================================
+# .NET / C# / Visual Studio / VS Code
+# =============================================================================
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+
+# Visual Studio / Rider / VS Code caches
 .vs/
 .vscode/
+.idea/
 *.user
+*.userosscache
 *.suo
+*.userprefs
+*.sln.docstates
+*.csproj.lscache
+*.lscache
+
+# Build / Publish Artifacts & Pacotes Compilados
+publish/
+publish-*/
+**/publish-*/
+PublishOutputs/
+*.zip
+*.tar.gz
+*.nupkg
+*.snupkg
 *.dll
 *.pdb
-start.sh
+*.exe
+
+# =============================================================================
+# Segredos, Configurações de Ambiente e Credenciais Sensíveis
+# =============================================================================
+.env
+.env.*
+*.env
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
+appsettings.Local.json
+appsettings.*.local.json
+secrets.json
+
+# Certificados e Chaves Privadas
+*.pfx
+*.p12
+*.key
+*.pem
+*.crt
+*.cer
+*.pubxml
+*.pubxml.user
+
+# Anotações Locais e Scripts Privados
 config_local.txt
+*credenciais*
+*senhas*
+*secret*
+
+# =============================================================================
+# Banco de Dados Local / Dumps Temporários (exceto pasta database/ oficial)
+# =============================================================================
+*.db
+*.sqlite
+*.sqlite3
+*.bak
+*.dump
+pgdata/
+postgres-data/
+
+# =============================================================================
+# Sistema Operacional
+# =============================================================================
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~
+*.swp

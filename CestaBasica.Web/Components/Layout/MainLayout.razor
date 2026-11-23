@@ -6,102 +6,373 @@
 
 @if (Sessao.UsuarioLogado != null)
 {
-    <div class="app-layout">
+    <div class="min-h-screen w-full bg-slate-50 text-slate-900 flex flex-col lg:flex-row antialiased">
 
-    <aside class="sidebar @(menuAberto ? "" : "collapsed")">
-
-        <div class="sidebar-header">
-
-            <div class="logo">
-                🧺
-            </div>
-
-            @if (menuAberto)
-            {
-                <div class="sidebar-user">
-                    <strong>@Sessao.UsuarioLogado?.Nome</strong>
-                    <small>@Sessao.UsuarioLogado?.Perfil</small>
+        <!-- Top Bar Mobile (lg:hidden) -->
+        <header class="lg:hidden sticky top-0 z-30 h-16 bg-slate-900 text-white border-b border-slate-800 px-4 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
                 </div>
-            }
-
-        </div>
-
-        <button class="toggle-btn" @onclick="AlternarMenu">
-            ☰
-        </button>
-
-        <nav>
-            <NavLink href="/dashboard" Match="NavLinkMatch.All">
-                <span>📊 Dashboard</span>
-            </NavLink>
-
-            <NavLink href="/funcionarios">
-                <span>👥 Funcionários</span>
-            </NavLink>
-            <NavLink href="/cestas">
-                <span>🧺 Cesta Básica</span>
-            </NavLink>
-            <NavLink href="/retiradas">
-                <span>📦 Retiradas</span>
-            </NavLink>
-
-            <NavLink href="/notificacoes">
-                <span>🔔 Notificações</span>
-            </NavLink>
-
-            @if (Sessao.IsAdmin)
-            {
-                <NavLink href="/usuarios">
-                    <span>👤 Usuários</span>
-                </NavLink>
-
-                <NavLink href="/configuracoes">
-                    <span>⚙️ Configurações</span>
-                </NavLink>
-            }
-            <a href="javascript:void(0)" class="nav-logout" @onclick="AbrirModalSair">
-                <span>🚪 Sair</span>
-            </a>
-        </nav>
-
-        
-    </aside>
-
-    <main class="page-content">
-        @Body
-    </main>
-    @if (mostrarModalSair)
-    {
-        <div class="modal-logout-overlay">
-            <div class="modal-logout">
-
-                <h3>Deseja realmente sair?</h3>
-                <p>Sua sessão será encerrada.</p>
-
-                <div class="modal-actions">
-                    <button class="btn-cancel" @onclick="FecharModalSair">
-                        Cancelar
-                    </button>
-
-                    <button class="btn-confirm" @onclick="ConfirmarLogout">
-                        Sim, sair
-                    </button>
+                <div class="min-w-0 flex-1">
+                    <span class="text-sm font-bold tracking-tight text-white block leading-tight truncate">Gestão Cesta Básica</span>
+                    <span class="text-[11px] text-slate-400 font-medium block truncate">Painel Corporativo</span>
                 </div>
             </div>
-        </div>
-    }
 
-</div>
+            <button type="button"
+                    @onclick="AlternarMenuMobile"
+                    aria-label="Abrir menu de navegação"
+                    class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0">
+                @if (menuMobileAberto)
+                {
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                }
+                else
+                {
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                }
+            </button>
+        </header>
+
+        <!-- Drawer Mobile (< 1024px) -->
+        @if (menuMobileAberto)
+        {
+            <div class="fixed inset-0 z-50 lg:hidden flex">
+                <!-- Backdrop -->
+                <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
+                     @onclick="FecharMenuMobile">
+                </div>
+
+                <!-- Painel Drawer -->
+                <aside class="relative z-10 w-64 max-w-[80vw] h-full bg-slate-900 text-slate-300 border-r border-slate-800 flex flex-col shadow-2xl overflow-hidden">
+                    <!-- Topo Drawer -->
+                    <div class="px-4 pt-5 pb-4 border-b border-slate-800/80 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                            <div class="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h2 class="text-base font-bold leading-tight text-white tracking-tight truncate">Gestão Cesta Básica</h2>
+                                <p class="text-xs text-slate-400 truncate">Painel Corporativo</p>
+                            </div>
+                        </div>
+
+                        <button type="button"
+                                @onclick="FecharMenuMobile"
+                                class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Usuário Logado Drawer -->
+                    <div class="px-4 py-3.5 border-b border-slate-800/80">
+                        <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                            <div class="w-9 h-9 rounded-full bg-blue-600/20 text-blue-300 border border-blue-500/30 flex items-center justify-center font-bold text-xs shrink-0">
+                                @ObterIniciais(Sessao.UsuarioLogado?.Nome)
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-semibold text-white truncate">
+                                    @Sessao.UsuarioLogado?.Nome
+                                </p>
+                                <span class="inline-flex items-center px-2 py-0.5 mt-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-500/15 text-blue-300 border border-blue-400/20">
+                                    @(Sessao.IsAdmin ? "ADMIN" : "OPERADOR")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navegação Drawer -->
+                    <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+                        <p class="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                            Operacional
+                        </p>
+
+                        <NavLink href="/dashboard"
+                                 Match="NavLinkMatch.All"
+                                 @onclick="FecharMenuMobile"
+                                 class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                                 ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                            </svg>
+                            <span class="truncate">Dashboard</span>
+                        </NavLink>
+
+                        <NavLink href="/funcionarios"
+                                 @onclick="FecharMenuMobile"
+                                 class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                                 ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="truncate">Funcionários</span>
+                        </NavLink>
+
+                        <NavLink href="/cestas"
+                                 @onclick="FecharMenuMobile"
+                                 class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                                 ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                            <span class="truncate">Cesta Básica</span>
+                        </NavLink>
+
+                        <NavLink href="/retiradas"
+                                 @onclick="FecharMenuMobile"
+                                 class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                                 ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                            <span class="truncate">Retiradas</span>
+                        </NavLink>
+
+                        <NavLink href="/notificacoes"
+                                 @onclick="FecharMenuMobile"
+                                 class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                                 ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <span class="truncate">Notificações</span>
+                        </NavLink>
+
+                        @if (Sessao.IsAdmin)
+                        {
+                            <div class="pt-4 mt-4 border-t border-slate-800/80 space-y-1">
+                                <p class="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                    Administração
+                                </p>
+
+                                <NavLink href="/usuarios"
+                                         @onclick="FecharMenuMobile"
+                                         class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                                         ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    <span class="truncate">Usuários</span>
+                                </NavLink>
+
+                                <NavLink href="/configuracoes"
+                                         @onclick="FecharMenuMobile"
+                                         class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                                         ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    <span class="truncate">Configurações</span>
+                                </NavLink>
+                            </div>
+                        }
+                    </nav>
+
+                    <!-- Rodapé Drawer -->
+                    <div class="p-3 border-t border-slate-800/80">
+                        <button type="button"
+                                @onclick="AbrirModalSair"
+                                class="w-full flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl px-3.5 py-2.5 transition-all cursor-pointer">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            <span class="truncate">Sair do Sistema</span>
+                        </button>
+                    </div>
+                </aside>
+            </div>
+        }
+
+        <!-- Sidebar Fixa Desktop (hidden lg:flex lg:w-64 lg:shrink-0) -->
+        <aside class="hidden lg:flex lg:w-64 lg:shrink-0 lg:flex-col lg:h-screen lg:sticky lg:top-0 bg-slate-900 text-slate-300 border-r border-slate-800 overflow-hidden">
+
+            <!-- Topo: Branding Institucional -->
+            <div class="px-4 pt-6 pb-4 border-b border-slate-800/80 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 shadow-inner shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h2 class="text-base font-bold leading-tight text-white tracking-tight truncate">Gestão Cesta Básica</h2>
+                    <p class="text-xs text-slate-400 truncate mt-0.5">Painel Corporativo</p>
+                </div>
+            </div>
+
+            <!-- Card do Usuário Logado -->
+            <div class="px-4 py-4 border-b border-slate-800/80">
+                <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                    <div class="w-10 h-10 rounded-full bg-blue-600/20 text-blue-300 border border-blue-500/30 flex items-center justify-center font-bold text-sm shrink-0">
+                        @ObterIniciais(Sessao.UsuarioLogado?.Nome)
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-semibold text-white truncate">
+                            @Sessao.UsuarioLogado?.Nome
+                        </p>
+                        <span class="inline-flex items-center px-2 py-0.5 mt-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-500/15 text-blue-300 border border-blue-400/20">
+                            @(Sessao.IsAdmin ? "ADMIN" : "OPERADOR")
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Links de Navegação -->
+            <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+                <p class="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                    Operacional
+                </p>
+
+                <NavLink href="/dashboard"
+                         Match="NavLinkMatch.All"
+                         class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                         ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    <span class="truncate">Dashboard</span>
+                </NavLink>
+
+                <NavLink href="/funcionarios"
+                         class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                         ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="truncate">Funcionários</span>
+                </NavLink>
+
+                <NavLink href="/cestas"
+                         class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                         ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span class="truncate">Cesta Básica</span>
+                </NavLink>
+
+                <NavLink href="/retiradas"
+                         class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                         ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    <span class="truncate">Retiradas</span>
+                </NavLink>
+
+                <NavLink href="/notificacoes"
+                         class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                         ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <span class="truncate">Notificações</span>
+                </NavLink>
+
+                @if (Sessao.IsAdmin)
+                {
+                    <div class="pt-4 mt-4 border-t border-slate-800/80 space-y-1">
+                        <p class="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                            Administração
+                        </p>
+
+                        <NavLink href="/usuarios"
+                                 class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                                 ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span class="truncate">Usuários</span>
+                        </NavLink>
+
+                        <NavLink href="/configuracoes"
+                                 class="flex items-center gap-3 text-sm font-medium text-slate-300 no-underline hover:text-white hover:bg-white/5 rounded-xl px-3.5 py-2.5 transition-all"
+                                 ActiveClass="bg-blue-600 text-white no-underline font-semibold shadow-sm shadow-blue-600/25">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="truncate">Configurações</span>
+                        </NavLink>
+                    </div>
+                }
+            </nav>
+
+            <!-- Rodapé da Sidebar: Sair -->
+            <div class="p-3 border-t border-slate-800/80">
+                <button type="button"
+                        @onclick="AbrirModalSair"
+                        class="w-full flex items-center gap-3 text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl px-3.5 py-2.5 transition-all cursor-pointer">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span class="truncate">Sair do Sistema</span>
+                </button>
+            </div>
+
+        </aside>
+
+        <!-- Área Principal de Conteúdo -->
+        <main class="flex-1 min-w-0 bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8">
+            <div class="max-w-7xl mx-auto">
+                @Body
+            </div>
+        </main>
+
+        <!-- Modal Confirmar Logout -->
+        @if (mostrarModalSair)
+        {
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+                <div class="w-full max-w-sm bg-white rounded-2xl border border-slate-200/80 shadow-xl p-6 text-center">
+                    <div class="w-12 h-12 mx-auto mb-4 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </div>
+
+                    <h3 class="text-lg font-bold text-slate-900">Deseja realmente sair?</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Sua sessão atual será encerrada com segurança.</p>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button"
+                                class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer"
+                                @onclick="FecharModalSair">
+                            Cancelar
+                        </button>
+
+                        <button type="button"
+                                class="h-10 px-4 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold text-sm rounded-xl shadow-xs transition-all cursor-pointer"
+                                @onclick="ConfirmarLogout">
+                            Sim, sair
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
 }
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
 
+<div id="blazor-error-ui" class="fixed bottom-4 right-4 z-50 hidden bg-red-600 text-white px-4 py-3 rounded-xl shadow-lg text-sm">
+    Ocorreu um erro inesperado.
+    <a href="" class="underline font-semibold ml-2 text-white">Recarregar</a>
+    <a class="dismiss ml-3 cursor-pointer text-white">×</a>
+</div>
 
 @code {
     private bool menuAberto = true;
+    private bool menuMobileAberto = false;
     private bool mostrarModalSair = false;
 
     protected override void OnInitialized()
@@ -117,8 +388,19 @@
         menuAberto = !menuAberto;
     }
 
+    private void AlternarMenuMobile()
+    {
+        menuMobileAberto = !menuMobileAberto;
+    }
+
+    private void FecharMenuMobile()
+    {
+        menuMobileAberto = false;
+    }
+
     private void AbrirModalSair()
     {
+        menuMobileAberto = false;
         mostrarModalSair = true;
     }
 
@@ -131,5 +413,17 @@
     {
         Sessao.Logout();
         Navigation.NavigateTo("/login", true);
+    }
+
+    private static string ObterIniciais(string? nome)
+    {
+        if (string.IsNullOrWhiteSpace(nome))
+            return "US";
+
+        var partes = nome.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (partes.Length == 1)
+            return partes[0].Length >= 2 ? partes[0][..2].ToUpperInvariant() : partes[0].ToUpperInvariant();
+
+        return $"{partes[0][0]}{partes[^1][0]}".ToUpperInvariant();
     }
 }

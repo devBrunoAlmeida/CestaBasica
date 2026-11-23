@@ -1,23 +1,13 @@
+/* CSS Global Base - Conflitos de Bootstrap/Legacy removidos para compatibilidade com Tailwind CSS v4 */
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #f8fafc;
+    color: #0f172a;
 }
 
-a, .btn-link {
-    color: #006bb7;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-.content {
-    padding-top: 1.1rem;
+a {
+    text-decoration: none;
 }
 
 h1:focus {
@@ -42,52 +32,6 @@ h1:focus {
     color: white;
 }
 
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
-    }
-
-.darker-border-checkbox.form-check-input {
-    border-color: #929292;
-}
-
-a.btn-back {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 44px;
-
-    padding: 0 18px;
-
-    border-radius: 14px;
-
-    background: white;
-
-    color: #002b6b;
-
-    font-weight: 700;
-
-    text-decoration: none;
-
-    box-shadow:
-        0 10px 24px rgba(0, 43, 107, 0.08);
-
-    transition: all 0.25s ease;
-
-    cursor: pointer;
-}
-
-a.btn-back:hover {
-    background: #005be0;
-
-    color: white;
-
-    transform: translateX(-4px);
-
-    box-shadow:
-        0 14px 28px rgba(0, 91, 224, 0.22);
-}
-
-a.btn-back.active {
-    background: white;
-    color: #002b6b;
+.blazor-error-boundary::after {
+    content: "An error has occurred.";
 }

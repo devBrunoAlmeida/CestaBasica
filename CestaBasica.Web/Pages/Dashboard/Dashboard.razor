@@ -6,203 +6,322 @@
 @using CestaBasica.Web.Services
 @inject SessaoUsuarioService Sessao
 
-
-    @if (!string.IsNullOrWhiteSpace(mensagemErro))
+@if (!string.IsNullOrWhiteSpace(mensagemErro))
 {
-    <div class="toast-overlay">
-        <div class="toast-popup">
-            <div class="toast-icon">⚠️</div>
+    <div class="fixed top-5 right-5 z-50 max-w-sm w-full bg-white rounded-2xl border border-amber-200 border-l-4 border-l-amber-500 shadow-lg p-4 flex items-start gap-3">
+        <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+        </div>
 
-            <div class="toast-content">
-                <strong>Atenção</strong>
-                <p>@mensagemErro</p>
-                <small>Fechando em @segundosRestantes segundo(s)...</small>
-            </div>
+        <div class="flex-1 min-w-0">
+            <strong class="block text-sm font-bold text-slate-900">Atenção</strong>
+            <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">@mensagemErro</p>
+            <small class="block text-[11px] font-semibold text-amber-600 mt-1">Fechando em @segundosRestantes segundo(s)...</small>
         </div>
     </div>
 }
-<div class="dashboard-content">
 
-    <header class="topbar">
+<div class="space-y-6">
+
+    <!-- Cabeçalho da Página + Filtro por Período -->
+    <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-            <h1>Dashboard</h1>
-            <p>Visão gerencial dos programas de distribuição de benefícios.</p>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Visão gerencial dos programas de distribuição de benefícios.</p>
         </div>
 
-        <div class="filters">
-            <InputDate @bind-Value="dataInicio" />
-            <InputDate @bind-Value="dataFim" />
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-3 flex flex-col sm:flex-row sm:items-center gap-2.5">
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold text-slate-500 whitespace-nowrap">Início</label>
+                <InputDate @bind-Value="dataInicio"
+                           class="w-full sm:w-40 h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all" />
+            </div>
 
-            <button type="button" @onclick="CarregarDashboard">
-                Filtrar
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold text-slate-500 whitespace-nowrap">Fim</label>
+                <InputDate @bind-Value="dataFim"
+                           class="w-full sm:w-40 h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all" />
+            </div>
+
+            <button type="button"
+                    @onclick="CarregarDashboard"
+                    class="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl shadow-xs transition-all cursor-pointer inline-flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                <span>Filtrar</span>
             </button>
         </div>
     </header>
 
-    <section class="cards-grid">
+    <!-- 4 Cards de KPI (grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4) -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4">
 
-        <div class="card-stat">
-            <div>
-                <span>Total de Funcionários</span>
-                <h2>@(carregando ? "..." : dashboard?.TotalFuncionarios)</h2>
+        <!-- KPI 1: Total de Funcionários -->
+        <div class="p-5 bg-white rounded-2xl border border-slate-200 flex items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+                <span class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Total de Funcionários</span>
+                <h2 class="text-2xl xl:text-3xl font-extrabold text-slate-900 tabular-nums mt-1">
+                    @(carregando ? "..." : dashboard?.TotalFuncionarios)
+                </h2>
             </div>
-            <div class="card-icon blue">👥</div>
+            <div class="shrink-0 w-11 h-11 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </div>
         </div>
 
-        <div class="card-stat">
-            <div>
-                <span>Total de Retiradas</span>
-                <h2>@(carregando ? "..." : dashboard?.TotalRetiradas)</h2>
+        <!-- KPI 2: Total de Retiradas -->
+        <div class="p-5 bg-white rounded-2xl border border-slate-200 flex items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+                <span class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Total de Retiradas</span>
+                <h2 class="text-2xl xl:text-3xl font-extrabold text-slate-900 tabular-nums mt-1">
+                    @(carregando ? "..." : dashboard?.TotalRetiradas)
+                </h2>
             </div>
-            <div class="card-icon green">📦</div>
+            <div class="shrink-0 w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
         </div>
 
-        <div class="card-stat">
-            <div>
-                <span>Cestas disponíveis</span>
-                <h2>@(carregando ? "..." : dashboard?.TotalCestasDisponiveis)</h2>
+        <!-- KPI 3: Cestas Disponíveis -->
+        <div class="p-5 bg-white rounded-2xl border border-slate-200 flex items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+                <span class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Cestas Disponíveis</span>
+                <h2 class="text-2xl xl:text-3xl font-extrabold text-slate-900 tabular-nums mt-1">
+                    @(carregando ? "..." : dashboard?.TotalCestasDisponiveis)
+                </h2>
             </div>
-            <div class="card-icon yellow">📦</div>
+            <div class="shrink-0 w-11 h-11 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+            </div>
         </div>
 
-        <div class="card-stat">
-            <div>
-                <span>Notificações Enviadas</span>
-                <h2>@(carregando ? "..." : dashboard?.TotalNotificacoes)</h2>
+        <!-- KPI 4: Notificações Enviadas -->
+        <div class="p-5 bg-white rounded-2xl border border-slate-200 flex items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+                <span class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Notificações Enviadas</span>
+                <h2 class="text-2xl xl:text-3xl font-extrabold text-slate-900 tabular-nums mt-1">
+                    @(carregando ? "..." : dashboard?.TotalNotificacoes)
+                </h2>
             </div>
-            <div class="card-icon purple">🔔</div>
+            <div class="shrink-0 w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+            </div>
         </div>
 
     </section>
 
-    <section class="charts-grid">
+    <!-- Gráficos: Evolução de Retiradas & Distribuição por Setor -->
+    <section class="grid grid-cols-1 xl:grid-cols-12 gap-6">
 
-        <div class="panel">
-            <div class="panel-header">
-                <h3>Evolução de Retiradas</h3>
-                <span>Últimos 6 meses</span>
+        <!-- Gráfico Evolução de Retiradas (xl:col-span-7) -->
+        <div class="xl:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-xs p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between gap-2 mb-6">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Evolução de Retiradas</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Acompanhamento mensal de entregas</p>
+                </div>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600">
+                    Últimos 6 meses
+                </span>
             </div>
 
-            <div class="bar-chart">
-                @{
-                    var evolucao = dashboard?.EvolucaoRetiradas ?? [];
-                    var maiorValor = evolucao.Any() ? evolucao.Max(x => x.Total) : 1;
-                }
+            @{
+                var evolucao = dashboard?.EvolucaoRetiradas ?? [];
+                var maiorValor = evolucao.Any() ? evolucao.Max(x => x.Total) : 1;
+                if (maiorValor <= 0) maiorValor = 1;
+            }
 
-                @foreach (var item in evolucao)
-                {
-                    var altura = item.Total > 0
-                        ? Math.Max((item.Total * 100m) / maiorValor, 8)
-                        : 4;
+            <div class="pt-4">
+                <!-- Área das Barras com Grade Tracejada -->
+                <div class="relative h-64 flex items-end justify-between gap-3 sm:gap-5 px-2 pb-2 border-b border-slate-200">
+                    <!-- Linhas de grade horizontais tracejadas sutis -->
+                    <div class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-2">
+                        <div class="border-b border-dashed border-slate-200 w-full"></div>
+                        <div class="border-b border-dashed border-slate-200 w-full"></div>
+                        <div class="border-b border-dashed border-slate-200 w-full"></div>
+                        <div class="w-full"></div>
+                    </div>
 
-                    <div class="chart-column">
-                        <small class="chart-value">
-                            @item.Total.ToString("N0")
-                        </small>
+                    @foreach (var item in evolucao)
+                    {
+                        var alturaPx = item.Total > 0
+                            ? Math.Max((int)Math.Round((item.Total * 185.0) / maiorValor), 14)
+                            : 6;
 
-                        <div class="chart-bar-container">
-                            <div class="chart-bar"
-                                 style="height:@($"{altura.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}%")">
+                        <div class="relative z-10 flex-1 flex flex-col items-center justify-end group">
+                            <span class="text-xs font-bold text-slate-800 tabular-nums mb-1.5">
+                                @item.Total.ToString("N0")
+                            </span>
+
+                            <div class="w-full max-w-[44px] bg-gradient-to-t from-blue-600 to-blue-400 group-hover:from-blue-700 group-hover:to-blue-500 rounded-t-lg transition-all duration-300 shadow-xs"
+                                 style="height: @(alturaPx)px;">
                             </div>
                         </div>
+                    }
+                </div>
 
-                        <span class="chart-label">@item.Mes</span>
-                    </div>
-                }
-
+                <!-- Rótulos dos Meses na Base -->
+                <div class="flex items-center justify-between gap-3 sm:gap-5 px-2 pt-3">
+                    @foreach (var item in evolucao)
+                    {
+                        <div class="flex-1 text-center min-w-0">
+                            <span class="block text-[11px] sm:text-xs font-semibold text-slate-500 truncate">
+                                @item.Mes
+                            </span>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
 
-        <div class="panel">
-            <div class="panel-header">
-                <h3>Distribuição por Setor</h3>
-                <span>Secretarias</span>
+        <!-- Distribuição por Setor (xl:col-span-5) - Sem scroll interno, crescimento natural -->
+        <div class="xl:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-xs p-6 flex flex-col">
+            <div class="flex items-center justify-between gap-2 mb-6">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Distribuição por Setor</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Proporção por secretarias</p>
+                </div>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700">
+                    Secretarias
+                </span>
             </div>
 
-            <div class="sector-list">
-
+            <div class="space-y-4">
                 @foreach (var setor in dashboard?.DistribuicaoPorSetor ?? [])
                 {
-                    <div>
-                        <span>@setor.Setor</span>
-                        <strong>@setor.Porcentagem%</strong>
+                    var larguraBarra = Math.Clamp(setor.Porcentagem, 0, 100);
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between gap-2 text-sm">
+                            <span class="font-medium text-slate-700 truncate">@setor.Setor</span>
+                            <strong class="font-bold text-slate-900 tabular-nums shrink-0">@setor.Porcentagem%</strong>
+                        </div>
+                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-blue-600 rounded-full transition-all duration-500"
+                                 style="width: @($"{larguraBarra.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}%")">
+                            </div>
+                        </div>
                     </div>
                 }
-
             </div>
         </div>
 
     </section>
 
-    <section class="bottom-grid">
+    <!-- Seção Inferior: Últimas Retiradas & Notificações Recentes -->
+    <section class="grid grid-cols-1 xl:grid-cols-12 gap-6">
 
-        <div class="panel">
-            <div class="panel-header">
-                <h3>Últimas Retiradas</h3>
-                <span>Resumo operacional</span>
+        <!-- Tabela Últimas Retiradas -->
+        <div class="xl:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
+            <div class="flex items-center justify-between gap-2 mb-5">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Últimas Retiradas</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Resumo operacional recente</p>
+                </div>
+                <a href="/retiradas" class="text-xs font-semibold text-blue-600 hover:text-blue-700 no-underline">
+                    Ver todas
+                </a>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Funcionário</th>
-                        <th>Setor</th>
-                        <th>Data</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    @foreach (var retirada in dashboard?.UltimasRetiradas ?? [])
-                    {
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap">
                         <tr>
-                            <td>@retirada.Funcionario</td>
-                            <td>@retirada.Setor</td>
-
-                            <td>
-                                @(retirada.Data?.ToString("dd/MM/yyyy"))
-                            </td>
-
-                            <td>
-                                <span class="badge success">
-                                    @retirada.Status
-                                </span>
-                            </td>
+                            <th class="py-3 px-4">Funcionário</th>
+                            <th class="py-3 px-4">Setor</th>
+                            <th class="py-3 px-4">Data</th>
+                            <th class="py-3 px-4">Status</th>
                         </tr>
-                    }
+                    </thead>
 
-                </tbody>
-            </table>
+                    <tbody class="divide-y divide-slate-100 bg-white text-sm text-slate-700">
+                        @if (dashboard?.UltimasRetiradas != null && dashboard.UltimasRetiradas.Any())
+                        {
+                            @foreach (var retirada in dashboard.UltimasRetiradas)
+                            {
+                                <tr class="hover:bg-slate-50/80 transition-colors">
+                                    <td class="py-3 px-4 font-semibold text-slate-900 whitespace-nowrap">@retirada.Funcionario</td>
+                                    <td class="py-3 px-4 text-slate-600 whitespace-nowrap">@retirada.Setor</td>
+                                    <td class="py-3 px-4 text-slate-500 tabular-nums whitespace-nowrap">
+                                        @(retirada.Data?.ToString("dd/MM/yyyy"))
+                                    </td>
+                                    <td class="py-3 px-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            @retirada.Status
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="py-8 px-4 text-center text-sm text-slate-400">
+                                    Nenhuma retirada registrada no período selecionado.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="panel">
-            <div class="panel-header">
-                <h3>Notificações Recentes</h3>
-                <span>Comunicações enviadas</span>
+        <!-- Notificações Recentes -->
+        <div class="xl:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
+            <div class="flex items-center justify-between gap-2 mb-5">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Notificações Recentes</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Comunicações enviadas</p>
+                </div>
+                <a href="/notificacoes" class="text-xs font-semibold text-blue-600 hover:text-blue-700 no-underline">
+                    Central
+                </a>
             </div>
 
-            <div class="notification-list">
-
-                @foreach (var notificacao in dashboard?.NotificacoesRecentes ?? [])
+            <div class="space-y-3">
+                @if (dashboard?.NotificacoesRecentes != null && dashboard.NotificacoesRecentes.Any())
                 {
-                    <div>
-
-                        <strong>
-                            @notificacao.Titulo
-                        </strong>
-
-                        <p>
-                            @notificacao.Mensagem
-                        </p>
-
-                        <small>
-                            @(notificacao.DataEnvio?.ToString("dd/MM/yyyy HH:mm"))
-                        </small>
-
+                    @foreach (var notificacao in dashboard.NotificacoesRecentes)
+                    {
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center justify-between gap-2">
+                                    <strong class="text-sm font-semibold text-slate-900 truncate">
+                                        @notificacao.Titulo
+                                    </strong>
+                                    <small class="text-[11px] font-medium text-slate-400 tabular-nums shrink-0">
+                                        @(notificacao.DataEnvio?.ToString("dd/MM/yyyy HH:mm"))
+                                    </small>
+                                </div>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                    @notificacao.Mensagem
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="py-8 text-center text-sm text-slate-400">
+                        Nenhuma notificação enviada recentemente.
                     </div>
                 }
-
             </div>
         </div>
 

@@ -5,40 +5,63 @@
 @using CestaBasica.Web.Services
 @inject SessaoUsuarioService SessaoUsuario
 
+<div class="space-y-6">
 
-<div class="employees-page">
-    <div class="page-header">
-        <div class="header-left">
-
-            <div>
-                <h1>Gerenciamento de Funcionários</h1>
-                <p>Controle administrativo de beneficiários, retiradas e histórico operacional.</p>
-            </div>
-        </div>
-        <button class="btn-primary" @onclick='() => Navigation.NavigateTo("/novo")'>
-            ➕ Novo funcionário
-        </button>
-
-        <button class="btn-secondary" @onclick='() => Navigation.NavigateTo("/importacao")'>
-            📥 Importar funcionários
-        </button>
-    </div>
-    <section class="filters-card">
-        <div class="search-box">
-            <label>Pesquisar funcionário</label>
-
-            <div class="search-input">
-                <span>🔎</span>
-
-                <input placeholder="Pesquisar por nome, matrícula ou código de barras..." @bind="termoBusca"
-                       @bind:event="oninput" @bind:after="ResetarPagina" />
-            </div>
+    <!-- Cabeçalho da Página -->
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Gerenciamento de Funcionários</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Controle administrativo de beneficiários, retiradas e histórico operacional.</p>
         </div>
 
-        <div class="filter-group">
+        <div class="flex flex-wrap items-center gap-2.5">
+            <button type="button"
+                    class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer inline-flex items-center gap-2"
+                    @onclick='() => Navigation.NavigateTo("/importacao")'>
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                <span>Importar funcionários</span>
+            </button>
+
+            <button type="button"
+                    class="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm rounded-xl shadow-xs transition-all cursor-pointer inline-flex items-center gap-2"
+                    @onclick='() => Navigation.NavigateTo("/novo")'>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Novo funcionário</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Card de Filtros -->
+    <section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 space-y-4">
+        <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
+                Pesquisar funcionário
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <input type="text"
+                       placeholder="Pesquisar por nome, matrícula ou código de barras..."
+                       @bind="termoBusca"
+                       @bind:event="oninput"
+                       @bind:after="ResetarPagina"
+                       class="w-full h-10 pl-10 pr-4 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all" />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-                <label>Status</label>
-                <select @bind="filtroStatus" @bind:after="ResetarPagina">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Status</label>
+                <select @bind="filtroStatus"
+                        @bind:after="ResetarPagina"
+                        class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all">
                     <option value="">Todos</option>
                     <option value="Retirado">Retirado</option>
                     <option value="Pendente">Pendente</option>
@@ -46,10 +69,11 @@
             </div>
 
             <div>
-                <label>Secretaria/Setor</label>
-                <select @bind="filtroSetor" @bind:after="ResetarPagina">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Secretaria/Setor</label>
+                <select @bind="filtroSetor"
+                        @bind:after="ResetarPagina"
+                        class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all">
                     <option value="">Todos</option>
-
                     @foreach (var setor in setores)
                     {
                         <option value="@setor">@setor</option>
@@ -58,145 +82,204 @@
             </div>
 
             <div>
-                <label>Data inicial</label>
-                <input type="date" value="@(dataInicial?.ToString("yyyy-MM-dd"))" @onchange="FiltrarDataInicial" />
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Data inicial</label>
+                <input type="date"
+                       value="@(dataInicial?.ToString("yyyy-MM-dd"))"
+                       @onchange="FiltrarDataInicial"
+                       class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all" />
             </div>
 
             <div>
-                <label>Data final</label>
-                <input type="date" value="@(dataFinal?.ToString("yyyy-MM-dd"))" @onchange="FiltrarDataFinal" />
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Data final</label>
+                <input type="date"
+                       value="@(dataFinal?.ToString("yyyy-MM-dd"))"
+                       @onchange="FiltrarDataFinal"
+                       class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all" />
             </div>
         </div>
     </section>
 
-    <section class="table-card">
-        <div class="table-header">
+    <!-- Card da Tabela -->
+    <section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-                <h2>Funcionários cadastrados</h2>
-                <span>
-                    Total encontrado: <strong>@TotalFuncionarios</strong> funcionário(s)
+                <h2 class="text-base font-bold text-slate-900">Funcionários cadastrados</h2>
+                <span class="text-xs text-slate-500">
+                    Total encontrado: <strong class="font-semibold text-slate-800 tabular-nums">@TotalFuncionarios</strong> funcionário(s)
                 </span>
             </div>
 
-            <button class="btn-secondary" @onclick="ExportarExcel">
-                Exportar Excel
+            <button type="button"
+                    class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer inline-flex items-center justify-center gap-2 self-start sm:self-auto"
+                    @onclick="ExportarExcel">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>Exportar Excel</span>
             </button>
         </div>
 
-        <div class="table-responsive">
-            <table>
-                <thead>
+        <div class="overflow-x-auto rounded-xl border border-slate-200">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap">
                     <tr>
-                        <th>Nome</th>
-                        <th>Matrícula</th>
-                        <th>Código de barras</th>
-                        <th>Telefone</th>
-                        <th>Secretaria/Setor</th>
-                        <th>Status de retirada</th>
-                        <th>Ações</th>
+                        <th class="py-3 px-4">Nome</th>
+                        <th class="py-3 px-4">Matrícula</th>
+                        <th class="py-3 px-4">Código de barras</th>
+                        <th class="py-3 px-4">Telefone</th>
+                        <th class="py-3 px-4">Secretaria/Setor</th>
+                        <th class="py-3 px-4">Status de retirada</th>
+                        <th class="py-3 px-4 text-right">Ações</th>
                     </tr>
                 </thead>
 
-                <tbody>
-                    @foreach (var funcionario in FuncionariosPaginados)
+                <tbody class="divide-y divide-slate-100 bg-white text-sm text-slate-700">
+                    @if (FuncionariosPaginados.Any())
                     {
-                        <tr class="@(EditarFuncionarioId == funcionario.Id ? "editing-row" : "")">
-                            <td>
-                                @if (EditarFuncionarioId == funcionario.Id)
-                                {
-                                    <input class="table-input" @bind="funcionario.NomeCompleto" />
-                                }
-                                else
-                                {
-                                    <div class="employee-info">
-                                        <strong>@funcionario.NomeCompleto</strong>
-                                    </div>
-                                }
-                            </td>
-
-                            <td>
-                                @if (EditarFuncionarioId == funcionario.Id)
-                                {
-                                    <input class="table-input" @bind="funcionario.Matricula" />
-                                }
-                                else
-                                {
-                                    @funcionario.Matricula
-                                }
-                            </td>
-
-                            <td>
-                                @if (EditarFuncionarioId == funcionario.Id)
-                                {
-                                    <input class="table-input" @bind="funcionario.CodigoBarras" />
-                                }
-                                else
-                                {
-                                    @funcionario.CodigoBarras
-                                }
-                            </td>
-
-                            <td>
-                                @if (EditarFuncionarioId == funcionario.Id)
-                                {
-                                    <input class="table-input" @bind="funcionario.Telefone" />
-                                }
-                                else
-                                {
-                                    @funcionario.Telefone
-                                }
-                            </td>
-
-                            <td>
-                                @if (EditarFuncionarioId == funcionario.Id)
-                                {
-                                    <input class="table-input" @bind="funcionario.Setor" />
-                                }
-                                else
-                                {
-                                    @funcionario.Setor
-                                }
-                            </td>
-
-                            <td>
-                                <span class="badge @(funcionario.Status == "Retirado" ? "success" : "warning")">
-                                    @funcionario.Status
-                                </span>
-                            </td>
-
-                            <td>
-                                <div class="actions">
+                        @foreach (var funcionario in FuncionariosPaginados)
+                        {
+                            <tr class="@(EditarFuncionarioId == funcionario.Id ? "bg-blue-50/40" : "hover:bg-slate-50/80") transition-colors">
+                                <td class="py-3 px-4 whitespace-nowrap">
                                     @if (EditarFuncionarioId == funcionario.Id)
                                     {
-                                        <button type="button" title="Salvar" @onclick="() => SalvarFuncionario(funcionario)">
-                                            💾
-                                        </button>
-
-                                        <button type="button" title="Cancelar" @onclick="CancelarEdicao">
-                                            ❌
-                                        </button>
+                                        <input class="w-full min-w-[180px] h-9 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                                               @bind="funcionario.NomeCompleto" />
                                     }
                                     else
                                     {
-                                        <button type="button" title="Editar"
-                                                @onclick="() => EditarFuncionarioId = funcionario.Id">
-                                            ✏️
-                                        </button>
+                                        <strong class="font-semibold text-slate-900">@funcionario.NomeCompleto</strong>
+                                    }
+                                </td>
 
-                                        <button type="button" title="Excluir"
-                                                @onclick="() => ExcluirFuncionario(funcionario.Id)">
-                                            🗑️
-                                        </button>
+                                <td class="py-3 px-4 whitespace-nowrap tabular-nums">
+                                    @if (EditarFuncionarioId == funcionario.Id)
+                                    {
+                                        <input class="w-28 h-9 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                                               @bind="funcionario.Matricula" />
+                                    }
+                                    else
+                                    {
+                                        @funcionario.Matricula
+                                    }
+                                </td>
 
-                                        @if (SessaoUsuario.IsAdmin)
+                                <td class="py-3 px-4 whitespace-nowrap font-mono text-xs text-slate-600">
+                                    @if (EditarFuncionarioId == funcionario.Id)
+                                    {
+                                        <input class="w-36 h-9 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                                               @bind="funcionario.CodigoBarras" />
+                                    }
+                                    else
+                                    {
+                                        @funcionario.CodigoBarras
+                                    }
+                                </td>
+
+                                <td class="py-3 px-4 whitespace-nowrap tabular-nums">
+                                    @if (EditarFuncionarioId == funcionario.Id)
+                                    {
+                                        <input class="w-36 h-9 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                                               @bind="funcionario.Telefone" />
+                                    }
+                                    else
+                                    {
+                                        @funcionario.Telefone
+                                    }
+                                </td>
+
+                                <td class="py-3 px-4 whitespace-nowrap">
+                                    @if (EditarFuncionarioId == funcionario.Id)
+                                    {
+                                        <input class="w-48 h-9 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                                               @bind="funcionario.Setor" />
+                                    }
+                                    else
+                                    {
+                                        @funcionario.Setor
+                                    }
+                                </td>
+
+                                <td class="py-3 px-4 whitespace-nowrap">
+                                    @if (funcionario.Status == "Retirado")
+                                    {
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            @funcionario.Status
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                            @funcionario.Status
+                                        </span>
+                                    }
+                                </td>
+
+                                <td class="py-3 px-4 whitespace-nowrap text-right">
+                                    <div class="inline-flex items-center justify-end gap-1">
+                                        @if (EditarFuncionarioId == funcionario.Id)
                                         {
-                                            <button type="button" title="Visualizar histórico"
-                                                    @onclick="() => VisualizarHistorico(funcionario)">
-                                                📄
+                                            <button type="button"
+                                                    title="Salvar"
+                                                    class="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 transition-colors cursor-pointer"
+                                                    @onclick="() => SalvarFuncionario(funcionario)">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </button>
+
+                                            <button type="button"
+                                                    title="Cancelar"
+                                                    class="p-2 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                                                    @onclick="CancelarEdicao">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
                                             </button>
                                         }
-                                    }
-                                </div>
+                                        else
+                                        {
+                                            <button type="button"
+                                                    title="Editar"
+                                                    class="p-2 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
+                                                    @onclick="() => EditarFuncionarioId = funcionario.Id">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </button>
+
+                                            <button type="button"
+                                                    title="Excluir"
+                                                    class="p-2 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                                                    @onclick="() => ExcluirFuncionario(funcionario.Id)">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+
+                                            @if (SessaoUsuario.IsAdmin)
+                                            {
+                                                <button type="button"
+                                                        title="Visualizar histórico"
+                                                        class="p-2 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
+                                                        @onclick="() => VisualizarHistorico(funcionario)">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </button>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="py-10 px-4 text-center text-sm text-slate-400">
+                                Nenhum funcionário encontrado com os filtros informados.
                             </td>
                         </tr>
                     }
@@ -204,40 +287,58 @@
             </table>
         </div>
 
-        <div class="pagination">
-            <span>
-                Página @PaginaAtual de @TotalPaginas —
-                Total: <strong>@TotalFuncionarios</strong> registros
+        <!-- Paginação -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
+            <span class="text-xs text-slate-500">
+                Página <strong class="font-semibold text-slate-800">@PaginaAtual</strong> de <strong class="font-semibold text-slate-800">@TotalPaginas</strong> —
+                Total: <strong class="font-semibold text-slate-800 tabular-nums">@TotalFuncionarios</strong> registros
             </span>
 
-            <div>
-                <button disabled="@(PaginaAtual == 1)" @onclick="PaginaAnterior">
+            <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button"
+                        disabled="@(PaginaAtual == 1)"
+                        @onclick="PaginaAnterior"
+                        class="h-9 px-3 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 text-xs font-medium text-slate-700 transition-colors cursor-pointer">
                     Anterior
                 </button>
 
                 @if (PaginaAtual > 4)
                 {
-                    <button @onclick="() => IrParaPagina(1)">1</button>
-                    <span>...</span>
+                    <button type="button"
+                            @onclick="() => IrParaPagina(1)"
+                            class="w-9 h-9 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors cursor-pointer">
+                        1
+                    </button>
+                    <span class="px-1 text-slate-400 text-xs">...</span>
                 }
 
                 @foreach (var pagina in PaginasVisiveis)
                 {
-                    <button class="@(PaginaAtual == pagina ? "active" : "")" @onclick="() => IrParaPagina(pagina)">
+                    <button type="button"
+                            class="w-9 h-9 rounded-lg text-xs font-semibold transition-all cursor-pointer @(PaginaAtual == pagina ? "bg-blue-600 text-white shadow-xs" : "border border-slate-300 bg-white hover:bg-slate-50 text-slate-700")"
+                            @onclick="() => IrParaPagina(pagina)">
                         @pagina
                     </button>
                 }
 
                 @if (PaginaAtual < TotalPaginas - 3)
                 {
-                    <span>...</span>
-                    <button @onclick="() => IrParaPagina(TotalPaginas)">@TotalPaginas</button>
+                    <span class="px-1 text-slate-400 text-xs">...</span>
+                    <button type="button"
+                            @onclick="() => IrParaPagina(TotalPaginas)"
+                            class="w-9 h-9 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors cursor-pointer">
+                        @TotalPaginas
+                    </button>
                 }
 
-                <button disabled="@(PaginaAtual == TotalPaginas)" @onclick="ProximaPagina">
+                <button type="button"
+                        disabled="@(PaginaAtual == TotalPaginas)"
+                        @onclick="ProximaPagina"
+                        class="h-9 px-3 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 text-xs font-medium text-slate-700 transition-colors cursor-pointer">
                     Próxima
                 </button>
             </div>
         </div>
     </section>
+
 </div>

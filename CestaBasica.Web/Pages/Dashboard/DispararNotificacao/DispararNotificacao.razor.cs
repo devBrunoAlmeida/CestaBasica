@@ -219,7 +219,7 @@ public partial class DispararNotificacao : ComponentBase, IDisposable
             if (resultado.Conectado)
             {
                 await CarregarStatusWhatsappAsync();
-                FeedbackWhatsapp = "✅ Seu telefone já está conectado!";
+                FeedbackWhatsapp = "Seu telefone já está conectado!";
                 return;
             }
 
@@ -273,7 +273,7 @@ public partial class DispararNotificacao : ComponentBase, IDisposable
                     QrCodeBase64 = null;
                     PairingCode = null;
                     FeedbackWhatsappErro = false;
-                    FeedbackWhatsapp = "✅ Telefone vinculado com sucesso! Agora você já pode disparar notificações.";
+                    FeedbackWhatsapp = "Telefone vinculado com sucesso! Agora você já pode disparar notificações.";
                     StateHasChanged();
                     break;
                 }
@@ -390,7 +390,7 @@ public partial class DispararNotificacao : ComponentBase, IDisposable
                 return;
             }
 
-            FeedbackWhatsapp = $"✅ Mensagem de teste enviada com sucesso para {TelefoneTeste}!";
+            FeedbackWhatsapp = $"Mensagem de teste enviada com sucesso para {TelefoneTeste}!";
             ExibirPainelTeste = false;
         }
         catch (Exception ex)
@@ -515,7 +515,7 @@ public partial class DispararNotificacao : ComponentBase, IDisposable
             if (falhas == 0)
             {
                 RetornoErro = false;
-                MensagemRetorno = $"✅ {enviados} notificação(ões) enviada(s) com sucesso!";
+                MensagemRetorno = $"{enviados} notificação(ões) enviada(s) com sucesso!";
             }
             else
             {

@@ -4,19 +4,41 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestão de Cestas Básicas</title>
     <base href="/" />
 
+    <!-- Tipografia Moderna: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- CSS Base Existente -->
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="CestaBasica.Web.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
 
-<HeadOutlet @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
+    <!-- Tailwind CSS v4 (com @@ escapado para o Razor) -->
+    <script src="https://cdn.jsdelivr.net/npm/@@tailwindcss/browser@4"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+
+    <HeadOutlet @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
 </head>
 
-<body>
+<body class="bg-slate-50 text-slate-900 antialiased">
 
-<Routes @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
+    <Routes @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
 
     <script src="_framework/blazor.web.js"></script>
     <script src="js/download.js"></script>

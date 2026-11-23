@@ -2,106 +2,150 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components
-
 @using CestaBasica.Shared.DTOs
 
+<div class="space-y-6 max-w-3xl mx-auto">
 
-<div class="employee-form-page">
-    <div class="page-header">
+    <!-- Cabeçalho -->
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1>Cadastro de Funcionário</h1>
-            <p>Preencha os dados cadastrais para registrar um novo funcionário no sistema.</p>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Cadastro de Funcionário</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Preencha os dados cadastrais para registrar um novo funcionário no sistema.</p>
         </div>
 
-        <button type="button" class="btn-cancel" @onclick="Cancelar">
-            ← Voltar
+        <button type="button"
+                class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer inline-flex items-center gap-2 self-start sm:self-auto"
+                @onclick="Cancelar">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>Voltar</span>
         </button>
-    </div>
+    </header>
 
     @if (!string.IsNullOrWhiteSpace(mensagemSucesso))
     {
-        <div class="alert alert-success mb-3">
-            ✅ @mensagemSucesso
+        <div class="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium">
+            <svg class="w-5 h-5 shrink-0 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>@mensagemSucesso</span>
         </div>
     }
 
     <EditForm Model="funcionario" OnValidSubmit="Salvar" FormName="funcionarioForm">
 
         <DataAnnotationsValidator />
-        <ValidationSummary />
+        <ValidationSummary class="text-xs text-red-600 mb-3" />
 
-        <section class="form-card">
-            <div class="card-header">
-                <h2>Dados do funcionário</h2>
-                <span>Informações principais para identificação e controle.</span>
+        <section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 sm:p-8 space-y-6">
+            <div class="border-b border-slate-100 pb-4">
+                <h2 class="text-base font-bold text-slate-900">Dados do funcionário</h2>
+                <span class="text-xs text-slate-500">Informações principais para identificação e controle.</span>
             </div>
 
-            <div class="form-grid">
-                <div class="form-group full">
-                    <label for="nome">👤 Nome completo</label>
-                    <InputText id="nome" class="form-control-custom" @bind-Value="funcionario.NomeCompleto"
-                               placeholder="Digite o nome completo" autocomplete="name" />
-                    <ValidationMessage For="@(() => funcionario.NomeCompleto)" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="sm:col-span-2">
+                    <label for="nome" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        Nome completo
+                    </label>
+                    <InputText id="nome"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               @bind-Value="funcionario.NomeCompleto"
+                               placeholder="Digite o nome completo"
+                               autocomplete="name" />
+                    <div class="text-xs text-red-600 mt-1">
+                        <ValidationMessage For="@(() => funcionario.NomeCompleto)" />
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="matricula">🆔 Matrícula</label>
-                    <InputText id="matricula" class="form-control-custom" @bind-Value="funcionario.Matricula"
+                <div>
+                    <label for="matricula" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        Matrícula
+                    </label>
+                    <InputText id="matricula"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               @bind-Value="funcionario.Matricula"
                                placeholder="Ex: MAT-0001" />
-                    <ValidationMessage For="@(() => funcionario.Matricula)" />
+                    <div class="text-xs text-red-600 mt-1">
+                        <ValidationMessage For="@(() => funcionario.Matricula)" />
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="codigoBarras">📦 Código de barras</label>
-                    <InputText id="codigoBarras" class="form-control-custom" @bind-Value="funcionario.CodigoBarras"
+                <div>
+                    <label for="codigoBarras" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        Código de barras
+                    </label>
+                    <InputText id="codigoBarras"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               @bind-Value="funcionario.CodigoBarras"
                                placeholder="Digite o código de barras" />
-                    <ValidationMessage For="@(() => funcionario.CodigoBarras)" />
+                    <div class="text-xs text-red-600 mt-1">
+                        <ValidationMessage For="@(() => funcionario.CodigoBarras)" />
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="telefone">📱 Telefone</label>
-                    <InputText id="telefone" class="form-control-custom" Value="@funcionario.Telefone"
+                <div>
+                    <label for="telefone" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        Telefone
+                    </label>
+                    <InputText id="telefone"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               Value="@funcionario.Telefone"
                                ValueChanged="@((string valor) => FormatarTelefone(valor))"
-                               ValueExpression="@(() => funcionario.Telefone)" maxlength="15" placeholder="(15) 99999-9999"
+                               ValueExpression="@(() => funcionario.Telefone)"
+                               maxlength="15"
+                               placeholder="(15) 99999-9999"
                                autocomplete="tel" />
                 </div>
 
-                <div class="form-group">
-                    <label for="setor">🏢 Secretaria/Setor</label>
+                <div>
+                    <label for="setor" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        Secretaria/Setor
+                    </label>
 
-                    <InputSelect id="setor" class="form-control-custom" @bind-Value="setorSelecionado"
+                    <InputSelect id="setor"
+                                 class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                                 @bind-Value="setorSelecionado"
                                  @bind-Value:after="AoSelecionarSetor">
-
                         <option value="">Selecione um setor</option>
-
                         @foreach (var setor in setores)
                         {
                             <option value="@setor">@setor</option>
                         }
-
                         <option value="Outro">Outro</option>
-
                     </InputSelect>
 
                     @if (setorSelecionado == "Outro")
                     {
-                        <InputText class="form-control-custom setor-outro" @bind-Value="novoSetor"
-                                   @bind-Value:after="AtualizarNovoSetor" placeholder="Digite o novo setor" />
+                        <InputText class="w-full h-10 px-3.5 mt-2 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                                   @bind-Value="novoSetor"
+                                   @bind-Value:after="AtualizarNovoSetor"
+                                   placeholder="Digite o novo setor" />
                     }
 
-                    <ValidationMessage For="@(() => funcionario.Setor)" />
+                    <div class="text-xs text-red-600 mt-1">
+                        <ValidationMessage For="@(() => funcionario.Setor)" />
+                    </div>
                 </div>
             </div>
 
-            <div class="form-actions">
-                <button type="button" class="btn-outline" @onclick="Cancelar">
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button type="button"
+                        class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer"
+                        @onclick="Cancelar">
                     Cancelar
                 </button>
 
-                <button type="submit" class="btn-save">
-                    💾 Salvar cadastro
+                <button type="submit"
+                        class="h-10 px-5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm rounded-xl shadow-xs transition-all cursor-pointer inline-flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Salvar cadastro</span>
                 </button>
             </div>
         </section>
     </EditForm>
+
 </div>

@@ -1,157 +1,259 @@
 @page "/configuracoes"
 @using CestaBasica.Shared.DTOs
 
-<div class="settings-page">
-    <div class="page-header">
+<div class="space-y-6">
+
+    <!-- Cabeçalho da Página -->
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1>Configurações do Sistema</h1>
-            <p>Gerencie parâmetros operacionais, segurança, notificações e auditoria da plataforma.</p>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Configurações do Sistema</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Gerencie parâmetros operacionais, segurança, notificações e auditoria da plataforma.</p>
         </div>
 
-        <button class="btn-primary"
+        <button type="button"
+                class="h-10 px-5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 text-white font-semibold text-sm rounded-xl shadow-xs transition-all cursor-pointer inline-flex items-center gap-2 self-start sm:self-auto"
                 @onclick="SalvarConfiguracoes"
                 disabled="@salvando">
-            @(salvando ? "Salvando..." : "Salvar alterações")
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>@(salvando ? "Salvando..." : "Salvar alterações")</span>
         </button>
-    </div>
+    </header>
 
     @if (!string.IsNullOrWhiteSpace(mensagem))
     {
-        <div class="alert-success">
-            @mensagem
+        <div class="flex items-center gap-2.5 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium">
+            <svg class="w-5 h-5 shrink-0 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>@mensagem</span>
         </div>
     }
 
-    <section class="settings-grid">
+    <!-- Grid de Cards de Configuração -->
+    <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-        <div class="settings-card">
-            <div class="card-icon blue">🔔</div>
-            <h2>Canais de Notificação</h2>
-            <p>Configure os canais utilizados para comunicação com funcionários.</p>
+        <!-- Card 1: Canais de Notificação -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col justify-between space-y-5">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Canais de Notificação</h2>
+                        <p class="text-xs text-slate-500">Comunicação com funcionários.</p>
+                    </div>
+                </div>
 
-            <label>
-                <input type="checkbox" @bind="config.WhatsAppHabilitado" />
-                WhatsApp habilitado
-            </label>
+                <div class="space-y-2.5 pt-1">
+                    <label class="flex items-center gap-2.5 text-sm font-medium text-slate-700 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" @bind="config.WhatsAppHabilitado" />
+                        <span>WhatsApp habilitado</span>
+                    </label>
 
-            <label>
-                <input type="checkbox" @bind="config.SmsHabilitado" />
-                SMS habilitado
-            </label>
+                    <label class="flex items-center gap-2.5 text-sm font-medium text-slate-700 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" @bind="config.SmsHabilitado" />
+                        <span>SMS habilitado</span>
+                    </label>
 
-            <label>
-                <input type="checkbox" @bind="config.EnvioAutomaticoLembretes" />
-                Envio automático de lembretes
-            </label>
+                    <label class="flex items-center gap-2.5 text-sm font-medium text-slate-700 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" @bind="config.EnvioAutomaticoLembretes" />
+                        <span>Envio automático de lembretes</span>
+                    </label>
+                </div>
 
-            <div class="form-group mt-3">
-                <label>URL da Evolution API</label>
-                <input class="form-control" @bind="config.EvolutionBaseUrl" placeholder="http://localhost:8080" />
+                <div class="space-y-3 pt-3 border-t border-slate-100">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">URL da Evolution API</label>
+                        <input type="text"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               @bind="config.EvolutionBaseUrl"
+                               placeholder="http://localhost:8080" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">API Key da Evolution API</label>
+                        <input type="password"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               @bind="config.EvolutionApiKey"
+                               placeholder="Chave da Evolution API" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Nome da Instância WhatsApp</label>
+                        <input type="text"
+                               class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                               @bind="config.EvolutionInstance"
+                               placeholder="cesta-basica" />
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group mt-2">
-                <label>API Key da Evolution API</label>
-                <input type="password" class="form-control" @bind="config.EvolutionApiKey" placeholder="Chave da Evolution API" />
-            </div>
-
-            <div class="form-group mt-2">
-                <label>Nome da Instância WhatsApp</label>
-                <input class="form-control" @bind="config.EvolutionInstance" placeholder="cesta-basica" />
-            </div>
-
-            <a href="/notificacoes" class="btn-secondary mt-3" style="display:inline-block;text-align:center;text-decoration:none;padding:10px 16px;border-radius:12px;">
-                📱 Conectar aparelho WhatsApp →
+            <a href="/notificacoes"
+               class="w-full h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer inline-flex items-center justify-center gap-2 no-underline">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <span>Conectar aparelho WhatsApp</span>
             </a>
         </div>
 
-        <div class="settings-card">
-            <div class="card-icon yellow">⏱️</div>
-            <h2>Configuração de Sessão</h2>
-            <p>Defina regras de permanência e expiração de acesso.</p>
+        <!-- Card 2: Configuração de Sessão -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col justify-between space-y-5">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Configuração de Sessão</h2>
+                        <p class="text-xs text-slate-500">Regras de permanência e expiração.</p>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label>Tempo de sessão</label>
-                <select @bind="config.TempoSessaoMinutos">
-                    <option value="30">30 minutos</option>
-                    <option value="60">1 hora</option>
-                    <option value="120">2 horas</option>
-                </select>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Tempo de sessão</label>
+                    <select @bind="config.TempoSessaoMinutos"
+                            class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all">
+                        <option value="30">30 minutos</option>
+                        <option value="60">1 hora</option>
+                        <option value="120">2 horas</option>
+                    </select>
+                </div>
+
+                <label class="flex items-center gap-2.5 text-sm font-medium text-slate-700 cursor-pointer pt-1">
+                    <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" @bind="config.EncerrarPorInatividade" />
+                    <span>Encerrar sessão por inatividade</span>
+                </label>
             </div>
-
-            <label>
-                <input type="checkbox" @bind="config.EncerrarPorInatividade" />
-                Encerrar sessão por inatividade
-            </label>
         </div>
 
-        <div class="settings-card">
-            <div class="card-icon green">💾</div>
-            <h2>Backup</h2>
-            <p>Configure rotinas de cópia de segurança dos dados do sistema.</p>
+        <!-- Card 3: Backup -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col justify-between space-y-5">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Backup</h2>
+                        <p class="text-xs text-slate-500">Rotinas de cópia de segurança.</p>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label>Frequência</label>
-                <select @bind="config.FrequenciaBackup">
-                    <option value="Diario">Diário</option>
-                    <option value="Semanal">Semanal</option>
-                    <option value="Mensal">Mensal</option>
-                </select>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Frequência</label>
+                    <select @bind="config.FrequenciaBackup"
+                            class="w-full h-10 px-3.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all">
+                        <option value="Diario">Diário</option>
+                        <option value="Semanal">Semanal</option>
+                        <option value="Mensal">Mensal</option>
+                    </select>
+                </div>
             </div>
 
-            <button class="btn-secondary" type="button">
-                Executar backup agora
+            <button class="w-full h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer inline-flex items-center justify-center gap-2"
+                    type="button">
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>Executar backup agora</span>
             </button>
         </div>
 
-        <div class="settings-card">
-            <div class="card-icon purple">👥</div>
-            <h2>Usuários</h2>
-            <p>Defina políticas de acesso, perfis e permissões administrativas.</p>
-
-            <label>
-                <input type="checkbox" @bind="config.PermitirCadastroOperadores" />
-                Permitir cadastro de operadores
-            </label>
-        </div>
-
-        <div class="settings-card">
-            <div class="card-icon red">🔐</div>
-            <h2>Segurança</h2>
-            <p>Gerencie regras de autenticação e proteção dos dados.</p>
-
-            <label>
-                <input type="checkbox" checked disabled />
-                Autenticação segura
-            </label>
-
-            <label>
-                <input type="checkbox" @bind="config.BloqueioTentativasInvalidas" />
-                Bloqueio após tentativas inválidas
-            </label>
-        </div>
-
-        <div class="settings-card logs-card">
-            <div class="card-icon dark">📋</div>
-            <h2>Logs do Sistema</h2>
-            <p>Acompanhe eventos administrativos e ações críticas.</p>
-
-            <div class="logs-list">
-                <div>
-                    <strong>Login administrativo</strong>
-                    <span>16/05/2026 10:40</span>
+        <!-- Card 4: Usuários -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col justify-between space-y-5">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Usuários</h2>
+                        <p class="text-xs text-slate-500">Políticas de acesso e perfis.</p>
+                    </div>
                 </div>
 
-                <div>
-                    <strong>Backup executado</strong>
-                    <span>16/05/2026 09:00</span>
+                <label class="flex items-center gap-2.5 text-sm font-medium text-slate-700 cursor-pointer">
+                    <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" @bind="config.PermitirCadastroOperadores" />
+                    <span>Permitir cadastro de operadores</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Card 5: Segurança -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col justify-between space-y-5">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-red-50 text-red-600 border border-red-100 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Segurança</h2>
+                        <p class="text-xs text-slate-500">Autenticação e proteção dos dados.</p>
+                    </div>
                 </div>
 
-                <div>
-                    <strong>Usuário atualizado</strong>
-                    <span>15/05/2026 17:25</span>
+                <div class="space-y-2.5">
+                    <label class="flex items-center gap-2.5 text-sm font-medium text-slate-400 cursor-not-allowed">
+                        <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600" checked disabled />
+                        <span>Autenticação segura (BCrypt)</span>
+                    </label>
+
+                    <label class="flex items-center gap-2.5 text-sm font-medium text-slate-700 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" @bind="config.BloqueioTentativasInvalidas" />
+                        <span>Bloqueio após tentativas inválidas</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 6: Logs do Sistema -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col justify-between space-y-4">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-slate-100 text-slate-700 border border-slate-200 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Logs do Sistema</h2>
+                        <p class="text-xs text-slate-500">Eventos administrativos e auditoria.</p>
+                    </div>
+                </div>
+
+                <div class="divide-y divide-slate-100 text-sm">
+                    <div class="py-2.5 flex items-center justify-between gap-2">
+                        <strong class="font-semibold text-slate-800">Login administrativo</strong>
+                        <span class="text-xs text-slate-400 tabular-nums">16/05/2026 10:40</span>
+                    </div>
+
+                    <div class="py-2.5 flex items-center justify-between gap-2">
+                        <strong class="font-semibold text-slate-800">Backup executado</strong>
+                        <span class="text-xs text-slate-400 tabular-nums">16/05/2026 09:00</span>
+                    </div>
+
+                    <div class="py-2.5 flex items-center justify-between gap-2">
+                        <strong class="font-semibold text-slate-800">Usuário atualizado</strong>
+                        <span class="text-xs text-slate-400 tabular-nums">15/05/2026 17:25</span>
+                    </div>
                 </div>
             </div>
         </div>
 
     </section>
+
 </div>

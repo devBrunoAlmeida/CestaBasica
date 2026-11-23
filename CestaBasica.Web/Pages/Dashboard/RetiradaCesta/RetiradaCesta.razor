@@ -1,168 +1,253 @@
 @page "/retiradas"
-
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Web
 
+<div class="space-y-6">
 
-<div class="withdraw-page">
-
-    <div class="page-header">
+    <!-- Cabeçalho da Página -->
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1>Registro de Retirada</h1>
-            <p>Registre a entrega de cestas básicas por código de barras ou busca manual.</p>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Registro de Retirada</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Registre a entrega de cestas básicas por código de barras ou busca manual.</p>
         </div>
-    </div>
+    </header>
 
-    <section class="content-grid">
+    <!-- Alertas de Feedback -->
+    @if (retiradaConfirmada)
+    {
+        <div class="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm">
+            <svg class="w-5 h-5 shrink-0 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Retirada registrada com sucesso para <strong class="font-bold">@ultimoFuncionario</strong>.</span>
+        </div>
+    }
 
-        <div class="panel">
-            <div class="panel-header">
-                <h2>Identificação do Funcionário</h2>
-                <span>Informe o código de barras ou pesquise manualmente.</span>
+    @if (!string.IsNullOrWhiteSpace(erroRetirada))
+    {
+        <div class="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+            <svg class="w-5 h-5 shrink-0 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>@erroRetirada</span>
+        </div>
+    }
+
+    <!-- Grid Principal: Identificação (lg:col-span-5) & Dados do Funcionário (lg:col-span-7) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Painel Esquerdo: Identificação do Funcionário -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-5 flex flex-col">
+            <div>
+                <h2 class="text-base font-bold text-slate-900">Identificação do Funcionário</h2>
+                <span class="text-xs text-slate-500">Informe o código de barras ou pesquise manualmente.</span>
             </div>
 
-            <div class="form-group">
-                <label>Código de barras</label>
-                <input class="input-custom" placeholder="Leia ou digite o código de barras" value="@codigoBarras"
-                       @oninput="BuscarPorCodigo" />
+            <!-- Campo Destaque: Código de Barras -->
+            <div class="p-4 rounded-xl bg-blue-50/40 border border-blue-200/80 space-y-2">
+                <div class="flex items-center justify-between">
+                    <label class="text-xs font-bold uppercase tracking-wider text-blue-700 flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m-4-16v16m8-16v16M4 6v12m16-12v12" />
+                        </svg>
+                        <span>Código de barras</span>
+                    </label>
+                    <span class="text-[11px] font-medium text-blue-600 bg-blue-100/70 px-2 py-0.5 rounded-md">Leitor USB</span>
+                </div>
+
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-blue-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2m4-10v10m4-10v10m4-10v10" />
+                        </svg>
+                    </div>
+                    <input type="text"
+                           placeholder="Leia ou digite o código de barras..."
+                           value="@codigoBarras"
+                           @oninput="BuscarPorCodigo"
+                           class="w-full h-11 pl-11 pr-4 rounded-xl border border-blue-300 bg-white text-sm font-mono text-slate-900 placeholder:font-sans placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-600 transition-all" />
+                </div>
+
+                <p class="text-[11px] text-slate-500">
+                    Posicione o cursor no campo acima e acione o leitor óptico USB no crachá.
+                </p>
             </div>
 
-            <div class="divider">
-                <span>ou</span>
+            <!-- Separador "ou" -->
+            <div class="relative flex items-center py-1">
+                <div class="flex-grow border-t border-slate-200"></div>
+                <span class="shrink-0 mx-3 text-xs font-semibold uppercase tracking-wider text-slate-400">ou</span>
+                <div class="flex-grow border-t border-slate-200"></div>
             </div>
 
-            <div class="form-group">
-                <label>Busca manual</label>
-                <input class="input-custom" placeholder="Pesquisar por nome ou matrícula" value="@buscaManual"
-                       @oninput="BuscarManual" />
+            <!-- Busca Manual -->
+            <div class="space-y-2">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Busca manual</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input type="text"
+                           placeholder="Pesquisar por nome ou matrícula..."
+                           value="@buscaManual"
+                           @oninput="BuscarManual"
+                           class="w-full h-10 pl-10 pr-4 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all" />
+                </div>
             </div>
 
             @if (resultadosBusca.Any())
             {
-                <div class="search-results">
+                <div class="border border-slate-200 rounded-xl divide-y divide-slate-100 max-h-56 overflow-y-auto bg-white shadow-xs">
                     @foreach (var item in resultadosBusca)
                     {
-                        <button type="button" @onclick="() => SelecionarFuncionario(item)">
-                            <strong>@item.NomeCompleto</strong>
-                            <span>@item.Matricula • @item.Setor</span>
+                        <button type="button"
+                                class="w-full px-4 py-2.5 text-left hover:bg-blue-50/60 transition-colors flex flex-col gap-0.5 cursor-pointer"
+                                @onclick="() => SelecionarFuncionario(item)">
+                            <strong class="text-sm font-semibold text-slate-900">@item.NomeCompleto</strong>
+                            <span class="text-xs text-slate-500">Matrícula: @item.Matricula • @item.Setor</span>
                         </button>
                     }
                 </div>
             }
         </div>
 
-        <div class="panel employee-card">
-            <div class="panel-header">
-                <h2>Dados do Funcionário</h2>
-                <span>Informações carregadas automaticamente.</span>
+        <!-- Painel Direito: Dados do Funcionário -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col justify-between">
+            <div class="mb-5">
+                <h2 class="text-base font-bold text-slate-900">Dados do Funcionário</h2>
+                <span class="text-xs text-slate-500">Informações carregadas automaticamente para conferência.</span>
             </div>
 
             @if (funcionarioSelecionado is not null)
             {
-                <div class="employee-info">
-                    <div class="avatar">
-                        @(!string.IsNullOrWhiteSpace(funcionarioSelecionado.NomeCompleto) ? funcionarioSelecionado.NomeCompleto[..1] : "?")
+                <div class="space-y-6 my-auto">
+                    <!-- Cabeçalho do Funcionário -->
+                    <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                        <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white font-extrabold text-xl flex items-center justify-center shrink-0 shadow-xs">
+                            @(!string.IsNullOrWhiteSpace(funcionarioSelecionado.NomeCompleto) ? funcionarioSelecionado.NomeCompleto[..1] : "?")
+                        </div>
+
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 truncate">@funcionarioSelecionado.NomeCompleto</h3>
+                            <p class="text-sm text-slate-500 truncate">@funcionarioSelecionado.Setor</p>
+                        </div>
+
+                        <div class="shrink-0">
+                            @if (funcionarioSelecionado.Status == "Retirado")
+                            {
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    @funcionarioSelecionado.Status
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    @funcionarioSelecionado.Status
+                                </span>
+                            }
+                        </div>
                     </div>
 
-                    <div>
-                        <h3>@funcionarioSelecionado.NomeCompleto</h3>
-                        <p>@funcionarioSelecionado.Setor</p>
+                    <!-- Grid de Detalhes -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-3.5 rounded-xl border border-slate-200/80 bg-white">
+                            <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Matrícula</span>
+                            <strong class="text-sm font-bold text-slate-900 tabular-nums mt-0.5 block">@funcionarioSelecionado.Matricula</strong>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl border border-slate-200/80 bg-white">
+                            <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Código de barras</span>
+                            <strong class="text-sm font-mono font-bold text-slate-900 mt-0.5 block">@funcionarioSelecionado.CodigoBarras</strong>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl border border-slate-200/80 bg-white">
+                            <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Telefone</span>
+                            <strong class="text-sm font-bold text-slate-900 tabular-nums mt-0.5 block">@funcionarioSelecionado.Telefone</strong>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl border border-slate-200/80 bg-white">
+                            <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Data e hora do registro</span>
+                            <strong class="text-sm font-bold text-slate-900 tabular-nums mt-0.5 block">@DateTime.UtcNow.ToString("dd/MM/yyyy HH:mm")</strong>
+                        </div>
                     </div>
+
+                    <!-- Botão Confirmar Retirada -->
+                    <button type="button"
+                            class="w-full h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-sm shadow-sm shadow-emerald-600/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+                            @onclick="ConfirmarRetirada">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Confirmar retirada de cesta básica</span>
+                    </button>
                 </div>
-
-                <div class="details-grid">
-                    <div>
-                        <span>Matrícula</span>
-                        <strong>@funcionarioSelecionado.Matricula</strong>
-                    </div>
-
-                    <div>
-                        <span>Código de barras</span>
-                        <strong>@funcionarioSelecionado.CodigoBarras</strong>
-                    </div>
-
-                    <div>
-                        <span>Telefone</span>
-                        <strong>@funcionarioSelecionado.Telefone</strong>
-                    </div>
-
-                    <div>
-                        <span>Status atual</span>
-                        <strong class="status">@funcionarioSelecionado.Status</strong>
-                    </div>
-                </div>
-
-                <div class="date-box">
-                    <span>Data e hora do registro</span>
-                    <strong>@DateTime.UtcNow.ToString("dd/MM/yyyy HH:mm")</strong>
-                </div>
-
-                <button type="button" class="btn-confirm" @onclick="ConfirmarRetirada">
-                    Confirmar retirada
-                </button>
             }
             else
             {
-                <div class="empty-state">
-                    <div>🔎</div>
-                    <h3>Nenhum funcionário selecionado</h3>
-                    <p>Faça a leitura do código de barras ou utilize a busca manual.</p>
+                <div class="my-auto py-12 text-center max-w-sm mx-auto space-y-3">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 text-slate-400 flex items-center justify-center">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800">Nenhum funcionário selecionado</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Faça a leitura do código de barras no crachá ou utilize a busca manual ao lado para carregar os dados do beneficiário.
+                    </p>
                 </div>
             }
         </div>
 
     </section>
 
-    @if (retiradaConfirmada)
-    {
-        <div class="success-alert">
-            ✅ Retirada registrada com sucesso para <strong>@ultimoFuncionario</strong>.
-        </div>
-    }
-
-    @if (!string.IsNullOrWhiteSpace(erroRetirada))
-    {
-        <div class="alert alert-danger mt-3">
-            ⚠️ @erroRetirada
-        </div>
-    }
-
-    <section class="history-panel">
-        <div class="panel-header">
-            <h2>Histórico recente de retiradas</h2>
-            <span>Últimas entregas registradas no sistema.</span>
+    <!-- Histórico Recente de Retiradas -->
+    <section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sm:p-6 space-y-4">
+        <div>
+            <h2 class="text-base font-bold text-slate-900">Histórico recente de retiradas</h2>
+            <span class="text-xs text-slate-500">Últimas entregas registradas no sistema.</span>
         </div>
 
-        <div class="table-responsive">
-            <table>
-                <thead>
+        <div class="overflow-x-auto rounded-xl border border-slate-200">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap">
                     <tr>
-                        <th>Funcionário</th>
-                        <th>Matrícula</th>
-                        <th>Setor</th>
-                        <th>Status</th>
-                        <th>Data da Retirada</th>
+                        <th class="py-3 px-4">Funcionário</th>
+                        <th class="py-3 px-4">Matrícula</th>
+                        <th class="py-3 px-4">Setor</th>
+                        <th class="py-3 px-4">Status</th>
+                        <th class="py-3 px-4">Data da Retirada</th>
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody class="divide-y divide-slate-100 bg-white text-sm text-slate-700">
                     @if (historicoRetiradas.Any())
                     {
                         @foreach (var item in historicoRetiradas)
                         {
-                            <tr>
-                                <td>@item.NomeCompleto</td>
-                                <td>@item.Matricula</td>
-                                <td>@item.Setor</td>
-                                <td><span class="badge">@item.Status</span></td>
-                                <td>@item.DataRetirada.ToString("dd/MM/yyyy HH:mm")</td>
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="py-3 px-4 font-semibold text-slate-900 whitespace-nowrap">@item.NomeCompleto</td>
+                                <td class="py-3 px-4 tabular-nums whitespace-nowrap">@item.Matricula</td>
+                                <td class="py-3 px-4 text-slate-600 whitespace-nowrap">@item.Setor</td>
+                                <td class="py-3 px-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        @item.Status
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 tabular-nums text-slate-500 whitespace-nowrap">
+                                    @item.DataRetirada.ToString("dd/MM/yyyy HH:mm")
+                                </td>
                             </tr>
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="5" class="empty-table">
+                            <td colspan="5" class="py-10 px-4 text-center text-sm text-slate-400">
                                 Nenhuma retirada recente encontrada.
                             </td>
                         </tr>

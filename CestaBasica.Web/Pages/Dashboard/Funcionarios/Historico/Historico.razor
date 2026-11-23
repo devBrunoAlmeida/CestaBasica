@@ -1,152 +1,201 @@
 @page "/funcionarios/{Id:int}/historico"
 @using Microsoft.AspNetCore.Components.Web
 
-<div class="history-page">
+<div class="space-y-6">
 
-    <div class="page-header">
+    <!-- Cabeçalho -->
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1>Histórico Completo do Funcionário</h1>
-            <p>Consulta consolidada de dados pessoais, notificações, retiradas e eventos registrados.</p>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Histórico Completo do Funcionário</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Consulta consolidada de dados pessoais, notificações, retiradas e eventos registrados.</p>
         </div>
 
-        <button class="btn-secondary" @onclick="Voltar">
-            Voltar
+        <button type="button"
+                class="h-10 px-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm rounded-xl transition-all cursor-pointer inline-flex items-center gap-2 self-start sm:self-auto"
+                @onclick="Voltar">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>Voltar</span>
         </button>
-    </div>
+    </header>
 
     @if (Funcionario is null)
     {
-        <p>Carregando histórico...</p>
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-8 text-center text-sm text-slate-500">
+            Carregando histórico...
+        </div>
     }
     else
     {
-        <section class="employee-card">
-            <div class="avatar">@ObterIniciais(Funcionario.NomeCompleto)</div>
+        <!-- Card de Perfil do Funcionário -->
+        <section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col sm:flex-row sm:items-center gap-6">
+            <div class="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 font-extrabold text-xl flex items-center justify-center shrink-0">
+                @ObterIniciais(Funcionario.NomeCompleto)
+            </div>
 
-            <div class="employee-data">
-                <h2>@Funcionario.NomeCompleto</h2>
-                <p>@Funcionario.Setor</p>
+            <div class="flex-1 min-w-0 space-y-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">@Funcionario.NomeCompleto</h2>
+                    <p class="text-sm text-slate-500">@Funcionario.Setor</p>
+                </div>
 
-                <div class="data-grid">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-slate-100">
                     <div>
-                        <span>Matrícula</span>
-                        <strong>@Funcionario.Matricula</strong>
+                        <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Matrícula</span>
+                        <strong class="text-sm font-bold text-slate-800 tabular-nums">@Funcionario.Matricula</strong>
                     </div>
 
                     <div>
-                        <span>Código de barras</span>
-                        <strong>@Funcionario.CodigoBarras</strong>
+                        <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Código de barras</span>
+                        <strong class="text-sm font-mono font-semibold text-slate-800">@Funcionario.CodigoBarras</strong>
                     </div>
 
                     <div>
-                        <span>Telefone</span>
-                        <strong>@Funcionario.Telefone</strong>
+                        <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Telefone</span>
+                        <strong class="text-sm font-bold text-slate-800 tabular-nums">@Funcionario.Telefone</strong>
                     </div>
 
                     <div>
-                        <span>Status atual</span>
-                        <strong class="status-ok">@HistoricoFuncionario?.Status</strong>
+                        <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Status atual</span>
+                        @if (HistoricoFuncionario?.Status == "Retirado")
+                        {
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                @HistoricoFuncionario?.Status
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                @(HistoricoFuncionario?.Status ?? Funcionario.Status)
+                            </span>
+                        }
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="content-grid">
+        <!-- Tabelas: Retiradas e Notificações -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            <div class="panel">
-                <div class="panel-header">
-                    <h2>Histórico de Retiradas</h2>
-                    <span>Registros de entregas realizadas.</span>
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+                <div>
+                    <h2 class="text-base font-bold text-slate-900">Histórico de Retiradas</h2>
+                    <span class="text-xs text-slate-500">Registros de entregas realizadas.</span>
                 </div>
 
                 @if (!Retiradas.Any())
                 {
-                    <p>Nenhuma retirada registrada.</p>
+                    <p class="py-8 text-center text-sm text-slate-400">Nenhuma retirada registrada.</p>
                 }
                 else
                 {
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data/Hora</th>
-                                <th>Responsável</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach (var item in Retiradas)
-                            {
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap">
                                 <tr>
-                                    <td>@item.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
-                                    <td>@item.Responsavel</td>
-                                    <td><span class="badge success">@item.Titulo</span></td>
+                                    <th class="py-3 px-4">Data/Hora</th>
+                                    <th class="py-3 px-4">Responsável</th>
+                                    <th class="py-3 px-4">Status</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+
+                            <tbody class="divide-y divide-slate-100 bg-white text-sm text-slate-700">
+                                @foreach (var item in Retiradas)
+                                {
+                                    <tr class="hover:bg-slate-50/80 transition-colors">
+                                        <td class="py-3 px-4 tabular-nums whitespace-nowrap">@item.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td class="py-3 px-4 whitespace-nowrap">@item.Responsavel</td>
+                                        <td class="py-3 px-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                @item.Titulo
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 }
             </div>
 
-            <div class="panel">
-                <div class="panel-header">
-                    <h2>Histórico de Notificações</h2>
-                    <span>Comunicações enviadas ao funcionário.</span>
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
+                <div>
+                    <h2 class="text-base font-bold text-slate-900">Histórico de Notificações</h2>
+                    <span class="text-xs text-slate-500">Comunicações enviadas ao funcionário.</span>
                 </div>
 
                 @if (!Notificacoes.Any())
                 {
-                    <p>Nenhuma notificação registrada.</p>
+                    <p class="py-8 text-center text-sm text-slate-400">Nenhuma notificação registrada.</p>
                 }
                 else
                 {
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data/Hora</th>
-                                <th>Canal</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach (var item in Notificacoes)
-                            {
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap">
                                 <tr>
-                                    <td>@item.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
-                                    <td>@item.Descricao</td>
-                                    <td><span class="badge delivered">@item.Titulo</span></td>
+                                    <th class="py-3 px-4">Data/Hora</th>
+                                    <th class="py-3 px-4">Canal</th>
+                                    <th class="py-3 px-4">Status</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+
+                            <tbody class="divide-y divide-slate-100 bg-white text-sm text-slate-700">
+                                @foreach (var item in Notificacoes)
+                                {
+                                    <tr class="hover:bg-slate-50/80 transition-colors">
+                                        <td class="py-3 px-4 tabular-nums whitespace-nowrap">@item.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td class="py-3 px-4">@item.Descricao</td>
+                                        <td class="py-3 px-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                                @item.Titulo
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 }
             </div>
 
         </section>
 
-        <section class="timeline-panel">
-            <div class="panel-header">
-                <h2>Linha do Tempo de Eventos</h2>
-                <span>Sequência cronológica das ações vinculadas ao funcionário.</span>
+        <!-- Linha do Tempo -->
+        <section class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-5">
+            <div>
+                <h2 class="text-base font-bold text-slate-900">Linha do Tempo de Eventos</h2>
+                <span class="text-xs text-slate-500">Sequência cronológica das ações vinculadas ao funcionário.</span>
             </div>
 
             @if (!Eventos.Any())
             {
-                <p>Nenhum evento registrado.</p>
+                <p class="py-6 text-center text-sm text-slate-400">Nenhum evento registrado.</p>
             }
             else
             {
-                <div class="timeline">
+                <div class="relative pl-6 border-l-2 border-slate-200 space-y-6">
                     @foreach (var item in Eventos)
                     {
-                        <div class="timeline-item @ObterClasseTimeline(item.Tipo)">
-                            <div class="dot"></div>
+                        var corPonto = ObterClasseTimeline(item.Tipo) switch
+                        {
+                            "success" => "bg-emerald-500 ring-emerald-100",
+                            "delivered" => "bg-blue-500 ring-blue-100",
+                            _ => "bg-slate-400 ring-slate-100"
+                        };
 
-                            <div class="timeline-content">
-                                <strong>@item.Titulo</strong>
-                                <p>@item.Descricao</p>
-                                <span>@item.DataHora.ToString("dd/MM/yyyy 'às' HH:mm")</span>
+                        <div class="relative">
+                            <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full @corPonto ring-4"></div>
+
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                                    <strong class="text-sm font-bold text-slate-900">@item.Titulo</strong>
+                                    <span class="text-xs text-slate-400 tabular-nums">@item.DataHora.ToString("dd/MM/yyyy 'às' HH:mm")</span>
+                                </div>
+                                <p class="text-xs text-slate-600 mt-1">@item.Descricao</p>
                             </div>
                         </div>
                     }
